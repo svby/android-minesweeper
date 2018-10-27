@@ -192,4 +192,9 @@ class Board(field: Field) {
         return true
     }
 
+    fun clear() {
+        Arrays.fill(state, 0)
+        revealed = 0
+    }
+
 }

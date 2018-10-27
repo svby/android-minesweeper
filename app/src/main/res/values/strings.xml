@@ -15,4 +15,10 @@
     <string name="defaultColumns">6</string>
     <string name="defaultSizeText">0x0, 0 bombs</string>
     <string name="safeFirst">Safe first click</string>
+
+    <string name="loss">You lost!</string>
+    <string name="victory">You won!</string>
+
+    <string name="newGame">New game</string>
+    <string name="retry">Restart board</string>
 </resources>

@@ -1,12 +1,12 @@
 package at.spengergasse.minesweeper.activities
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.widget.Button
 import android.widget.TableLayout
 import android.widget.TableRow
-import android.widget.Toast
 import at.spengergasse.minesweeper.*
 import at.spengergasse.minesweeper.game.Board
 import at.spengergasse.minesweeper.game.Field
@@ -43,6 +43,14 @@ class GameActivity : AppCompatActivity() {
         // Initialize UI
         // region UI initialization
         val buttons = Array(rows) { Array(columns) { Button(this@GameActivity) } }
+
+        fun freeze() {
+            buttons.forEach { row -> row.forEach { it.isEnabled = false } }
+        }
+
+        fun unfreeze() {
+            buttons.forEach { row -> row.forEach { it.isEnabled = true } }
+        }
 
         for (i in 0 until rows) {
             val tableRow = TableRow(this)
@@ -105,10 +113,34 @@ class GameActivity : AppCompatActivity() {
 
                     when (state) {
                         Board.State.Win -> {
-                            Toast.makeText(this, "You win!", Toast.LENGTH_LONG).show()
+                            freeze()
+                            AlertDialog.Builder(this)
+                                    .setMessage(R.string.victory)
+                                    .setPositiveButton(R.string.newGame) { _, _ -> finish() }
+                                    .create()
+                                    .show()
                         }
                         Board.State.Loss -> {
-                            Toast.makeText(this, "You lost.", Toast.LENGTH_LONG).show()
+                            freeze()
+                            AlertDialog.Builder(this)
+                                    .setMessage(R.string.loss)
+                                    .setPositiveButton(R.string.newGame) { _, _ -> finish() }
+                                    .setNeutralButton(R.string.retry) { _, _ ->
+                                        // Reset
+                                        // Note: don't reset `started`, we need to keep the bomb positions the same
+                                        board.clear()
+                                        for (row in 0 until board.rows) {
+                                            for (column in 0 until board.columns) {
+                                                buttons[row][column].apply {
+                                                    text = ""
+                                                    setBackgroundResource(R.drawable.covered_square)
+                                                }
+                                            }
+                                        }
+                                        unfreeze()
+                                    }
+                                    .create()
+                                    .show()
                         }
                         else -> Unit
                     }
