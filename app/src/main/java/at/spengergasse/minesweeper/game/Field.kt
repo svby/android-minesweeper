@@ -4,11 +4,13 @@ import kotlin.experimental.and
 import kotlin.experimental.inv
 import kotlin.experimental.or
 
-class Field private constructor(private val data: ByteArray, val rows: Int, val columns: Int) {
+class Field private constructor(private val data: ByteArray, mines: Int, val rows: Int, val columns: Int) {
 
-    constructor(rows: Int, columns: Int) : this(ByteArray(Math.ceil(rows * columns / 2.0).toInt()) { 0 }, rows, columns)
+    constructor(rows: Int, columns: Int) : this(ByteArray(Math.ceil(rows * columns / 8.0).toInt()) { 0 }, 0, rows, columns)
+    constructor(other: Field) : this(other.data.copyOf(), other.mines, other.rows, other.columns)
 
-    constructor(other: Field) : this(other.data.copyOf(), other.rows, other.columns)
+    var mines: Int = mines
+        private set
 
     companion object {
         @JvmStatic
@@ -58,90 +60,62 @@ class Field private constructor(private val data: ByteArray, val rows: Int, val 
 
     private val dataLock = Any()
 
-    var mines: Int = 0
-        private set
-
     val fields = rows * columns
-
-    private var preprocessed = false
 
     operator fun set(row: Int, column: Int, mine: Boolean) {
         if (row !in 0 until rows) throw ArrayIndexOutOfBoundsException(row)
         if (column !in 0 until columns) throw ArrayIndexOutOfBoundsException(column)
 
         val whichField = columns * row + column
-        val whichByte = whichField ushr 1
-        val whichHalf = whichField % 2
-
-        val bit = (whichHalf shl 2) + 3
+        val whichByte = whichField ushr 3
+        val whichBit = whichField % 8
 
         synchronized(dataLock) {
             val oldValue = data[whichByte]
-            val newValue = if (mine) oldValue or (1 shl bit).toByte() else oldValue and (1 shl bit).toByte().inv()
+            val newValue = if (mine) oldValue or (1 shl whichBit).toByte() else oldValue and (1 shl whichBit).toByte().inv()
             if (oldValue == newValue) return
-            preprocessed = false
             data[whichByte] = newValue
+            if (mine) mines++ else mines--
         }
     }
 
-    private fun getInt(row: Int, column: Int): Int {
+    private fun unsynchronizedGetInt(row: Int, column: Int): Int {
         if (row !in 0 until rows || column !in 0 until columns) return 0
-        return if (uncheckedGet(row, column)) 1 else 0
+        return if (unsynchronizedUncheckedGet(row, column)) 1 else 0
     }
 
     fun getAdjacent(row: Int, column: Int): Int {
         if (row !in 0 until rows) throw ArrayIndexOutOfBoundsException(row)
         if (column !in 0 until columns) throw ArrayIndexOutOfBoundsException(column)
 
-        val whichField = columns * row + column
-        val whichByte = whichField ushr 1
-        val whichHalf = whichField % 2
-
-        val shift = whichHalf shl 2
-
         synchronized(dataLock) {
-            return (data[whichByte].toInt() and 0b11111111 ushr shift) and 0b111
+            return 0 +
+                    unsynchronizedGetInt(row, column - 1) +
+                    unsynchronizedGetInt(row - 1, column - 1) +
+                    unsynchronizedGetInt(row - 1, column) +
+                    unsynchronizedGetInt(row - 1, column + 1) +
+                    unsynchronizedGetInt(row, column + 1) +
+                    unsynchronizedGetInt(row + 1, column + 1) +
+                    unsynchronizedGetInt(row + 1, column) +
+                    unsynchronizedGetInt(row + 1, column - 1)
         }
     }
 
-    fun preprocess() {
-        if (preprocessed) return
-        synchronized(dataLock) {
-            mines = 0
-            for (row in 0 until rows) {
-                for (column in 0 until columns) {
-                    if (uncheckedGet(row, column)) mines++
-                    val adjacent = 0 +
-                            getInt(row, column - 1) +
-                            getInt(row - 1, column - 1) +
-                            getInt(row - 1, column) +
-                            getInt(row - 1, column + 1) +
-                            getInt(row, column + 1) +
-                            getInt(row + 1, column + 1) +
-                            getInt(row + 1, column) +
-                            getInt(row + 1, column - 1)
+    private fun unsynchronizedUncheckedGet(row: Int, column: Int): Boolean {
+        val whichField = columns * row + column
+        val whichByte = whichField ushr 3
+        val whichBit = whichField % 8
 
-                    val whichField = columns * row + column
-                    val whichByte = whichField ushr 1
-                    val whichHalf = whichField % 2
-
-                    val shift = whichHalf shl 2
-
-                    data[whichByte] = data[whichByte] and (0b0111 shl shift).toByte().inv() or ((adjacent and 0b111) shl shift).toByte()
-                }
-            }
-        }
+        return data[whichByte].toInt() and 0b11111111 ushr whichBit and 1 == 1
     }
 
     private fun uncheckedGet(row: Int, column: Int): Boolean {
         val whichField = columns * row + column
-        val whichByte = whichField ushr 1
-        val whichHalf = whichField % 2
-
-        val shift = (whichHalf shl 2) + 3
+        val whichByte = whichField ushr 3
+        val whichBit = whichField % 8
 
         synchronized(dataLock) {
-            return data[whichByte].toInt() and 0b11111111 ushr shift and 1 == 1
+            return data[whichByte].toInt() and 0b11111111 ushr whichBit and 1 == 1
         }
     }
 
