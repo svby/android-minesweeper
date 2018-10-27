@@ -1,4 +1,4 @@
-package at.spengergasse.minesweeper
+package at.spengergasse.minesweeper.game
 
 import kotlin.experimental.and
 import kotlin.experimental.inv
@@ -100,7 +100,7 @@ class Field private constructor(private val data: ByteArray, val rows: Int, val 
         val shift = whichHalf shl 2
 
         synchronized(dataLock) {
-            return (data[whichByte].toInt() ushr shift) and 0b111
+            return (data[whichByte].toInt() and 0b11111111 ushr shift) and 0b111
         }
     }
 
@@ -141,7 +141,7 @@ class Field private constructor(private val data: ByteArray, val rows: Int, val 
         val shift = (whichHalf shl 2) + 3
 
         synchronized(dataLock) {
-            return data[whichByte].toInt() ushr shift and 1 == 1
+            return data[whichByte].toInt() and 0b11111111 ushr shift and 1 == 1
         }
     }
 

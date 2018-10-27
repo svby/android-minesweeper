@@ -1,4 +1,6 @@
-package at.spengergasse.minesweeper
+package at.spengergasse.minesweeper.game.moves
+
+import at.spengergasse.minesweeper.game.Board
 
 class ToggleFlagMove(val row: Int, val column: Int) : Move {
 

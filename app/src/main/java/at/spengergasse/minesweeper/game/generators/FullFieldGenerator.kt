@@ -1,4 +1,6 @@
-package at.spengergasse.minesweeper
+package at.spengergasse.minesweeper.game.generators
+
+import at.spengergasse.minesweeper.game.Field
 
 class FullFieldGenerator : FieldGenerator {
 

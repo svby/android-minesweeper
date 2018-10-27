@@ -1,5 +1,6 @@
-package at.spengergasse.minesweeper
+package at.spengergasse.minesweeper.game.generators
 
+import at.spengergasse.minesweeper.game.Field
 import kotlin.math.min
 
 class SequentialFieldGenerator : FieldGenerator {

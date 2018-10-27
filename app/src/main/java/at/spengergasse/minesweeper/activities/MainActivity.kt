@@ -1,9 +1,10 @@
-package at.spengergasse.minesweeper
+package at.spengergasse.minesweeper.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import at.spengergasse.minesweeper.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
