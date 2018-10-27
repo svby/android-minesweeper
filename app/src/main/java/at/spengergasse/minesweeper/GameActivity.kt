@@ -1,6 +1,5 @@
 package at.spengergasse.minesweeper
 
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
@@ -41,7 +40,7 @@ class GameActivity : AppCompatActivity() {
 
             for (j in 0 until columns) {
                 val button = buttons[i][j].apply {
-                    setBackgroundColor(Color.LTGRAY)
+                    setBackgroundResource(R.drawable.covered_square)
                     isLongClickable = true
                 }
                 button.layoutParams = TableRow.LayoutParams().apply {
@@ -54,8 +53,9 @@ class GameActivity : AppCompatActivity() {
 
                     for ((row, column) in affected) {
                         val target = buttons[row][column]
-                        if (board.isFlagged(row, column)) target.setBackgroundColor(Color.GRAY)
-                        else target.setBackgroundColor(Color.LTGRAY)
+                        if (board.isFlagged(row, column)) target.setBackgroundResource(R.drawable.flagged_square)
+                        else if (board.isRevealed(row, column)) target.setBackgroundResource(R.drawable.uncovered_square)
+                        else target.setBackgroundResource(R.drawable.covered_square)
                     }
 
                     true
@@ -69,12 +69,16 @@ class GameActivity : AppCompatActivity() {
                         val target = buttons[row][column]
                         when {
                             board.isRevealed(row, column) -> {
-                                target.setBackgroundColor(Color.WHITE)
-                                target.text = board.getAdjacentMines(row, column).let {
+                                target.setBackgroundResource(R.drawable.uncovered_square)
+                                target.isLongClickable = false
+                                board.getAdjacentMines(row, column).let {
                                     when {
-                                        board.isMine(row, column) -> "X"
-                                        it == 0 -> ""
-                                        else -> it.toString()
+                                        board.isMine(row, column) -> {
+                                            target.text = "X"
+                                            target.setBackgroundResource(R.drawable.mine_square)
+                                        }
+                                        it == 0 -> target.text = ""
+                                        else -> target.text = it.toString()
                                     }
                                 }
                             }
