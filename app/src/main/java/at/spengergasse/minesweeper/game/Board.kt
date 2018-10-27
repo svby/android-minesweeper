@@ -1,6 +1,8 @@
-package at.spengergasse.minesweeper
+package at.spengergasse.minesweeper.game
 
 import android.util.Log
+import at.spengergasse.minesweeper.Point
+import at.spengergasse.minesweeper.game.moves.Move
 import java.util.*
 import kotlin.experimental.and
 import kotlin.experimental.inv

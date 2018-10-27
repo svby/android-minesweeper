@@ -1,5 +1,7 @@
-package at.spengergasse.minesweeper
+package at.spengergasse.minesweeper.game.moves
 
+import at.spengergasse.minesweeper.Point
+import at.spengergasse.minesweeper.game.Board
 import java.util.*
 import kotlin.collections.HashSet
 

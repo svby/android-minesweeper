@@ -1,4 +1,4 @@
-package at.spengergasse.minesweeper
+package at.spengergasse.minesweeper.activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -7,6 +7,13 @@ import android.widget.Button
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.Toast
+import at.spengergasse.minesweeper.*
+import at.spengergasse.minesweeper.game.Board
+import at.spengergasse.minesweeper.game.Field
+import at.spengergasse.minesweeper.game.generators.FieldGenerationArguments
+import at.spengergasse.minesweeper.game.generators.RandomFieldGenerator
+import at.spengergasse.minesweeper.game.moves.FloodRevealMove
+import at.spengergasse.minesweeper.game.moves.ToggleFlagMove
 import kotlinx.android.synthetic.main.activity_game.*
 import kotlin.math.min
 
@@ -47,6 +54,7 @@ class GameActivity : AppCompatActivity() {
             for (j in 0 until columns) {
                 val button = buttons[i][j].apply {
                     setBackgroundResource(R.drawable.covered_square)
+                    text = ""
                     isLongClickable = true
                 }
                 button.layoutParams = TableRow.LayoutParams().apply {
@@ -68,12 +76,7 @@ class GameActivity : AppCompatActivity() {
                 }
 
                 button.setOnClickListener {
-                    if (!started) {
-                        if (safe) {
-                            board.ensureSafe(i, j)
-                        }
-                    }
-
+                    if (!started && safe) board.ensureSafe(i, j)
                     started = true
 
                     if (board.isFlagged(i, j)) return@setOnClickListener
