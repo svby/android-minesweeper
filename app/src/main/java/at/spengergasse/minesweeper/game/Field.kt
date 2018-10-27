@@ -12,52 +12,6 @@ class Field private constructor(private val data: ByteArray, mines: Int, val row
     var mines: Int = mines
         private set
 
-    companion object {
-        @JvmStatic
-        fun createSampleMedium() = Field(16, 16).apply {
-            this[0, 1] = true
-            this[0, 14] = true
-            this[1, 4] = true
-            this[1, 12] = true
-            this[3, 1] = true
-            this[3, 12] = true
-            this[4, 12] = true
-            this[5, 1] = true
-            this[6, 3] = true
-            this[6, 7] = true
-            this[6, 12] = true
-            this[6, 14] = true
-            this[7, 0] = true
-            this[7, 1] = true
-            this[7, 7] = true
-            this[7, 9] = true
-            this[7, 13] = true
-            this[8, 6] = true
-            this[8, 7] = true
-            this[8, 11] = true
-            this[8, 13] = true
-            this[9, 5] = true
-            this[9, 7] = true
-            this[10, 10] = true
-            this[11, 1] = true
-            this[11, 7] = true
-            this[11, 15] = true
-            this[12, 1] = true
-            this[12, 8] = true
-            this[13, 4] = true
-            this[13, 10] = true
-            this[13, 11] = true
-            this[13, 14] = true
-            this[14, 2] = true
-            this[14, 7] = true
-            this[14, 15] = true
-            this[15, 5] = true
-            this[15, 7] = true
-            this[15, 9] = true
-            this[15, 14] = true
-        }
-    }
-
     private val dataLock = Any()
 
     val fields = rows * columns
