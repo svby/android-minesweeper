@@ -77,6 +77,7 @@ class GameActivity : AppCompatActivity() {
 
                 button.setOnClickListener {
                     if (!started && safe) board.ensureSafe(i, j)
+
                     started = true
 
                     if (board.isFlagged(i, j)) return@setOnClickListener

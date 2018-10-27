@@ -6,8 +6,16 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import at.spengergasse.minesweeper.*
 import kotlinx.android.synthetic.main.activity_main.*
+import java.math.BigInteger
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+
+        private val MAX_ROWS_BIGINTEGER = BigInteger.valueOf(MAX_ROWS.toLong())
+        private val MAX_COLUMNS_BIGINTEGER = BigInteger.valueOf(MAX_COLUMNS.toLong())
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,9 +47,12 @@ class MainActivity : AppCompatActivity() {
                         putExtra(EXTRA_MINES, 40)
                     }
                     R.id.radio_custom -> {
-                        putExtra(EXTRA_ROWS, text_height.text.toString().toInt())
-                        putExtra(EXTRA_COLUMNS, text_width.text.toString().toInt())
-                        putExtra(EXTRA_MINES, text_mines.text.toString().toInt())
+                        val rows = text_height.getInt(MAX_ROWS_BIGINTEGER)
+                        val columns = text_width.getInt(MAX_COLUMNS_BIGINTEGER)
+
+                        putExtra(EXTRA_ROWS, rows)
+                        putExtra(EXTRA_COLUMNS, columns)
+                        putExtra(EXTRA_MINES, text_mines.getInt(BigInteger.valueOf((rows * columns).toLong())))
                     }
                 }
             }

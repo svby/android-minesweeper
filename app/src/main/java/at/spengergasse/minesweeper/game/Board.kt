@@ -1,6 +1,5 @@
 package at.spengergasse.minesweeper.game
 
-import android.util.Log
 import at.spengergasse.minesweeper.Point
 import at.spengergasse.minesweeper.game.moves.Move
 import java.util.*
@@ -23,11 +22,6 @@ class Board(field: Field) {
     val rows get() = field.rows
     val columns get() = field.columns
 
-    init {
-        this.field.preprocess()
-        Log.i("Board", field.getAdjacent(0, 0).toString())
-    }
-
     fun ensureSafe(row: Int, column: Int) {
         if (field[row, column]) {
             for (i in 0 until field.rows) {
@@ -41,7 +35,6 @@ class Board(field: Field) {
             }
             // Couldn't find a safe spot, delete the mine
             field[row, column] = false
-            field.preprocess()
         }
     }
 
