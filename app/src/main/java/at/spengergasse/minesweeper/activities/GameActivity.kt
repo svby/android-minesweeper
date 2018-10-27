@@ -3,10 +3,8 @@ package at.spengergasse.minesweeper.activities
 import android.app.AlertDialog
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
 import android.widget.Button
-import android.widget.TableLayout
-import android.widget.TableRow
+import android.widget.LinearLayout
 import at.spengergasse.minesweeper.*
 import at.spengergasse.minesweeper.game.Board
 import at.spengergasse.minesweeper.game.Field
@@ -53,11 +51,8 @@ class GameActivity : AppCompatActivity() {
         }
 
         for (i in 0 until rows) {
-            val tableRow = TableRow(this)
-            tableRow.layoutParams = TableLayout.LayoutParams().apply {
-                weight = 1.0f
-                gravity = Gravity.CENTER
-            }
+            val tableRow = LinearLayout(this)
+            tableRow.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1.0f)
 
             for (j in 0 until columns) {
                 val button = buttons[i][j].apply {
@@ -65,18 +60,17 @@ class GameActivity : AppCompatActivity() {
                     text = ""
                     isLongClickable = true
                 }
-                button.layoutParams = TableRow.LayoutParams().apply {
-                    width = TableRow.LayoutParams.MATCH_PARENT
-                    height = TableRow.LayoutParams.MATCH_PARENT
-                }
+                button.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f)
 
                 button.setOnLongClickListener { _ ->
                     val (_, affected) = board.push(ToggleFlagMove(i, j))
 
                     for ((row, column) in affected) {
                         val target = buttons[row][column]
-                        if (board.isFlagged(row, column)) target.setBackgroundResource(R.drawable.flagged_square)
-                        else if (board.isRevealed(row, column)) target.setBackgroundResource(R.drawable.uncovered_square)
+                        if (board.isFlagged(row, column)) {
+                            target.setBackgroundResource(R.drawable.flagged_square)
+                            target.text = "F"
+                        } else if (board.isRevealed(row, column)) target.setBackgroundResource(R.drawable.uncovered_square)
                         else target.setBackgroundResource(R.drawable.covered_square)
                     }
 
