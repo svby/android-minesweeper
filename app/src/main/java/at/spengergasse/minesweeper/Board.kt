@@ -26,6 +26,23 @@ class Board(field: Field) {
         Log.i("Board", field.getAdjacent(0, 0).toString())
     }
 
+    fun ensureSafe(row: Int, column: Int) {
+        if (field[row, column]) {
+            for (i in 0 until field.rows) {
+                for (j in 0 until field.columns) {
+                    if (!field[i, j]) {
+                        field[row, column] = false
+                        field[i, j] = true
+                        return
+                    }
+                }
+            }
+            // Couldn't find a safe spot, delete the mine
+            field[row, column] = false
+            field.preprocess()
+        }
+    }
+
     private fun uncheckedIsRevealed(row: Int, column: Int): Boolean {
         val whichField = field.columns * row + column
         val whichByte = whichField ushr 2
