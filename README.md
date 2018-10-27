@@ -7,4 +7,4 @@ The mine field is internally represented as a `byte[]` to save some memory.
 ## Screenshots
 
 ![](https://i.imgur.com/XfctH4s.png)
-![](https://i.imgur.com/aShmR5Q.png)
+![](https://i.imgur.com/1kpiwnS.png)
