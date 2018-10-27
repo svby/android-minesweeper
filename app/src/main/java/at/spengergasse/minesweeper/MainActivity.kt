@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
         button_start.setOnClickListener {
             layout_settings.childrenRecursive.forEach { it.isEnabled = true }
             val intent = Intent(this, GameActivity::class.java).apply {
+                putExtra(EXTRA_SAFE, switch_safe.isChecked)
+
                 when (group_difficulty.checkedRadioButtonId) {
                     R.id.radio_easy -> {
                         putExtra(EXTRA_ROWS, 9)

@@ -8,11 +8,14 @@ import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_game.*
+import kotlin.math.min
 
 class GameActivity : AppCompatActivity() {
 
     private lateinit var field: Field
     private lateinit var board: Board
+
+    private var started = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,10 +23,13 @@ class GameActivity : AppCompatActivity() {
 
         val rows = intent.getIntExtra(EXTRA_ROWS, 2)
         val columns = intent.getIntExtra(EXTRA_COLUMNS, 2)
-        val mines = if (intent.hasExtra(EXTRA_MINES)) intent.getIntExtra(EXTRA_MINES, 0) else null
+        val providedMines = if (intent.hasExtra(EXTRA_MINES)) intent.getIntExtra(EXTRA_MINES, 0) else null
+        val safe = intent.getBooleanExtra(EXTRA_SAFE, false)
+
+        val mines = min(providedMines ?: 0, if (safe) rows * columns - 1 else rows * columns)
 
         val generator = RandomFieldGenerator()
-        field = generator.generate(rows, columns, FieldGenerationArguments(mines ?: 0))
+        field = generator.generate(rows, columns, FieldGenerationArguments(mines))
 //      field = Field.createSampleMedium()
         board = Board(field)
 
@@ -62,6 +68,14 @@ class GameActivity : AppCompatActivity() {
                 }
 
                 button.setOnClickListener {
+                    if (!started) {
+                        if (safe) {
+                            board.ensureSafe(i, j)
+                        }
+                    }
+
+                    started = true
+
                     if (board.isFlagged(i, j)) return@setOnClickListener
                     val (state, affected) = board.push(FloodRevealMove(i, j))
 
