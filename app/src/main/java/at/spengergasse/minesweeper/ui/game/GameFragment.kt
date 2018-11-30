@@ -7,12 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.GridView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import at.spengergasse.minesweeper.R
 import at.spengergasse.minesweeper.game.Board
 import at.spengergasse.minesweeper.game.Field
 import at.spengergasse.minesweeper.game.generators.FieldGenerationArguments
-import at.spengergasse.minesweeper.game.generators.FullFieldGenerator
+import at.spengergasse.minesweeper.game.generators.RandomFieldGenerator
 import at.spengergasse.minesweeper.game.moves.FloodRevealMove
 import at.spengergasse.minesweeper.game.moves.ToggleFlagMove
 import at.spengergasse.minesweeper.toPx
@@ -43,7 +44,7 @@ class GameFragment : Fragment() {
         mines = prefs.getInt("mines", 10)
         safe = prefs.getBoolean("safe", true)
 
-        field = FullFieldGenerator().generate(rows, columns, FieldGenerationArguments(mines))
+        field = RandomFieldGenerator().generate(rows, columns, FieldGenerationArguments(mines))
         board = Board(field)
     }
 
@@ -92,7 +93,21 @@ class GameFragment : Fragment() {
                 }
             }
 
-            // TODO win/lose
+            when (state) {
+                Board.State.Win -> {
+                    AlertDialog.Builder(requireContext())
+                        .setMessage(R.string.victory)
+                        .create()
+                        .show()
+                }
+                Board.State.Loss -> {
+                    AlertDialog.Builder(requireContext())
+                        .setMessage(R.string.loss)
+                        .create()
+                        .show()
+                }
+                Board.State.Neutral -> Unit
+            }
         }
 
         grid.setOnItemLongClickListener { parent, view, position, id ->
