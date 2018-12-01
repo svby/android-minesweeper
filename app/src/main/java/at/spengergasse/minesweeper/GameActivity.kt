@@ -1,5 +1,6 @@
 package at.spengergasse.minesweeper
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,9 +13,10 @@ class GameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.game_activity)
+
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, GameFragment.newInstance())
+                .replace(R.id.container_game, GameFragment())
                 .commitNow()
         }
 
@@ -30,7 +32,9 @@ class GameActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_settings -> {
-                // TODO
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+                // TODO use navigation component
             }
             else -> return false
         }
