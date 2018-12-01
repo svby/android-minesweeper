@@ -7,13 +7,20 @@
         android:id="@+id/action_new"
         android:title="@string/action_new"
         android:icon="@drawable/ic_add"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         tools:ignore="AppCompatResource" />
 
     <item
         android:id="@+id/action_restart"
         android:title="@string/action_restart"
         android:icon="@drawable/ic_reload"
+        app:showAsAction="ifRoom"
+        tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/action_undo"
+        android:title="@string/action_undo"
+        android:icon="@drawable/ic_undo"
         app:showAsAction="always"
         tools:ignore="AppCompatResource" />
 

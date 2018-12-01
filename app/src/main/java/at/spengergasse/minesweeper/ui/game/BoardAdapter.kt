@@ -9,14 +9,21 @@ import at.spengergasse.minesweeper.R
 import at.spengergasse.minesweeper.game.Board
 import kotlin.math.roundToInt
 
-class BoardAdapter(val board: Board, private val size: Float) : BaseAdapter() {
+class BoardAdapter(private var _board: Board, private val size: Float) : BaseAdapter() {
+
+    var board: Board
+        get() = _board
+        set(value) {
+            _board = value
+            notifyDataSetChanged()
+        }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         return TextView(parent.context).apply {
             gravity = Gravity.CENTER
             text = ""
 
-            val cell = board[position / board.columns, position % board.columns]
+            val cell = _board[position / _board.columns, position % _board.columns]
 
             when {
                 cell.isRevealed -> {
@@ -24,7 +31,7 @@ class BoardAdapter(val board: Board, private val size: Float) : BaseAdapter() {
                         text = "X"
                         setBackgroundResource(R.drawable.mine_square)
                     } else {
-                        val adjacent = board.getAdjacentMines(cell.row, cell.column)
+                        val adjacent = _board.getAdjacentMines(cell.row, cell.column)
                         text = if (adjacent == 0) "" else adjacent.toString()
                         setBackgroundResource(R.drawable.uncovered_square)
                     }
@@ -48,10 +55,10 @@ class BoardAdapter(val board: Board, private val size: Float) : BaseAdapter() {
         }
     }
 
-    override fun getItem(position: Int) = board[position / board.columns, position % board.columns]
+    override fun getItem(position: Int) = _board[position / _board.columns, position % _board.columns]
 
     override fun getItemId(position: Int) = 0L
 
-    override fun getCount() = board.rows * board.columns
+    override fun getCount() = _board.rows * _board.columns
 
 }
