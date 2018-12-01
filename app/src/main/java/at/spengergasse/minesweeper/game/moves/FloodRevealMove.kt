@@ -7,18 +7,6 @@ import kotlin.collections.HashSet
 
 class FloodRevealMove(val row: Int, val column: Int) : Move {
 
-    private fun isMine(board: Board, row: Int, column: Int): Boolean {
-        if (row !in 0 until board.rows || column !in 0 until board.columns) return false
-        return board.isMine(row, column)
-    }
-
-//    fun directNeighbors(board: Board, row: Int, column: Int) = sequence {
-//        Point(row, column - 1).let { if (it.first in 0 until board.rows && it.second in 0 until board.columns) yield(it) }
-//        Point(row - 1, column).let { if (it.first in 0 until board.rows && it.second in 0 until board.columns) yield(it) }
-//        Point(row, column + 1).let { if (it.first in 0 until board.rows && it.second in 0 until board.columns) yield(it) }
-//        Point(row + 1, column).let { if (it.first in 0 until board.rows && it.second in 0 until board.columns) yield(it) }
-//    }
-
     fun neighbors(board: Board, row: Int, column: Int) = sequence {
         Point(
             row - 1,

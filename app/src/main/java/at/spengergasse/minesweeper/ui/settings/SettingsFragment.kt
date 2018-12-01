@@ -1,11 +1,11 @@
 package at.spengergasse.minesweeper.ui.settings
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.Switch
@@ -13,24 +13,30 @@ import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import at.spengergasse.minesweeper.*
 import at.spengergasse.minesweeper.game.GameSettings
+import kotlinx.android.synthetic.main.settings_fragment.*
+import java.math.BigInteger
 
 class SettingsFragment : Fragment() {
 
+    private val MAX = BigInteger.valueOf(Integer.MAX_VALUE.toLong())
+
+    lateinit var prefs: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.settings_fragment, container, false)
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
 
         val difficultyGroup = view.findViewById<RadioGroup>(R.id.group_difficulty)
         val minesField = view.findViewById<EditText>(R.id.text_mines)
         val rowsField = view.findViewById<EditText>(R.id.text_height)
         val columnsField = view.findViewById<EditText>(R.id.text_width)
         val safeSwitch = view.findViewById<Switch>(R.id.switch_safe)
-        val save = view.findViewById<Button>(R.id.button_save)
 
         difficultyGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
@@ -38,7 +44,6 @@ class SettingsFragment : Fragment() {
                     minesField.isEnabled = false
                     rowsField.isEnabled = false
                     columnsField.isEnabled = false
-                    save.isEnabled = false
 
                     columnsField.setText(EASY_COLUMNS.toString())
                     rowsField.setText(EASY_ROWS.toString())
@@ -55,7 +60,6 @@ class SettingsFragment : Fragment() {
                     minesField.isEnabled = false
                     rowsField.isEnabled = false
                     columnsField.isEnabled = false
-                    save.isEnabled = false
 
                     columnsField.setText(MEDIUM_COLUMNS.toString())
                     rowsField.setText(MEDIUM_ROWS.toString())
@@ -72,7 +76,6 @@ class SettingsFragment : Fragment() {
                     minesField.isEnabled = false
                     rowsField.isEnabled = false
                     columnsField.isEnabled = false
-                    save.isEnabled = false
 
                     columnsField.setText(HARD_COLUMNS.toString())
                     rowsField.setText(HARD_ROWS.toString())
@@ -89,7 +92,6 @@ class SettingsFragment : Fragment() {
                     minesField.isEnabled = true
                     rowsField.isEnabled = true
                     columnsField.isEnabled = true
-                    save.isEnabled = true
                 }
             }
         }
@@ -107,22 +109,18 @@ class SettingsFragment : Fragment() {
         columnsField.setText(loaded.columns.toString())
         safeSwitch.isChecked = loaded.safe
 
-        save.setOnClickListener {
-            prefs.edit {
-                remove(KEY_PRESET)
-                putInt(KEY_ROWS, rowsField.text.toString().toInt())
-                putInt(KEY_COLUMNS, columnsField.text.toString().toInt())
-                putInt(KEY_MINES, minesField.text.toString().toInt())
-            }
-        }
-
-        safeSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            prefs.edit {
-                putBoolean(KEY_SAFE, isChecked)
-            }
-        }
-
         return view
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        prefs.edit {
+            text_mines.text.toString().let { if (it.isNotEmpty()) putInt(KEY_MINES, it.toInt()) }
+            text_height.text.toString().let { if (it.isNotEmpty()) putInt(KEY_ROWS, it.toInt()) }
+            text_width.text.toString().let { if (it.isNotEmpty()) putInt(KEY_COLUMNS, it.toInt()) }
+            putBoolean(KEY_SAFE, switch_safe.isChecked)
+        }
     }
 
 }
