@@ -8,7 +8,7 @@
     android:padding="10dp">
 
     <TextView
-        android:text="@string/difficulty"
+        android:text="@string/category_difficulty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="30sp" />
@@ -19,7 +19,7 @@
         android:id="@+id/group_difficulty">
 
         <RadioButton
-            android:text="@string/easy"
+            android:text="@string/difficulty_easy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/radio_easy"
@@ -27,7 +27,7 @@
             android:checked="false" />
 
         <RadioButton
-            android:text="@string/medium"
+            android:text="@string/difficulty_medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/radio_medium"
@@ -35,7 +35,7 @@
             android:checked="false" />
 
         <RadioButton
-            android:text="@string/hard"
+            android:text="@string/difficulty_hard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/radio_hard"
@@ -43,7 +43,7 @@
             android:checked="false" />
 
         <RadioButton
-            android:text="@string/custom"
+            android:text="@string/difficulty_custom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/radio_custom"
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="@string/mines"
+                android:text="@string/config_mines"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
@@ -84,7 +84,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="@string/height"
+                android:text="@string/config_rows"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
@@ -106,7 +106,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="@string/width"
+                android:text="@string/config_columns"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
@@ -127,10 +127,10 @@
         android:id="@+id/button_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/save" />
+        android:text="@string/action_save_config" />
 
     <TextView
-        android:text="@string/settings"
+        android:text="@string/category_config"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -142,7 +142,7 @@
         android:layout_height="wrap_content">
 
         <Switch
-            android:text="@string/safeFirst"
+            android:text="@string/config_safe_first"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/switch_safe"

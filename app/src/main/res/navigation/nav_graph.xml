@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/gameFragment"
         android:name="at.spengergasse.minesweeper.ui.game.GameFragment"
-        android:label="Minesweeper">
+        android:label="@string/app_name">
         <action
             android:id="@+id/action_gameFragment_to_settingsFragment"
             app:destination="@id/settingsFragment"
@@ -21,6 +21,6 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="at.spengergasse.minesweeper.ui.settings.SettingsFragment"
-        android:label="Settings"
+        android:label="@string/action_settings"
         tools:layout="@layout/settings_fragment" />
 </navigation>
