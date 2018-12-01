@@ -79,7 +79,6 @@ class SettingsFragment : Fragment() {
             else -> difficultyGroup.check(R.id.radio_custom)
         }
 
-
         val watcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) = Unit
@@ -111,6 +110,8 @@ class SettingsFragment : Fragment() {
         rowsField.setText(loaded.rows.toString())
         columnsField.setText(loaded.columns.toString())
         safeSwitch.isChecked = loaded.safe
+
+        safeSwitch.setOnCheckedChangeListener { _, isChecked -> prefs.edit { putBoolean(KEY_SAFE, isChecked) } }
 
         saveButton.setOnClickListener {
             val checked = difficultyGroup.checkedRadioButtonId
