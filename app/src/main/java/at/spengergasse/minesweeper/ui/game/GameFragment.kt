@@ -20,7 +20,7 @@ import at.spengergasse.minesweeper.game.generators.RandomFieldGenerator
 import at.spengergasse.minesweeper.game.moves.FloodRevealMove
 import at.spengergasse.minesweeper.game.moves.ToggleFlagMove
 import at.spengergasse.minesweeper.toPx
-import kotlinx.android.synthetic.main.game_fragment.*
+import kotlinx.android.synthetic.main.fragment_game.*
 import kotlin.math.roundToInt
 
 class GameFragment : Fragment() {
@@ -49,7 +49,7 @@ class GameFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val loaded = inflater.inflate(R.layout.game_fragment, container, false) // as HorizontalScrollView
+        val loaded = inflater.inflate(R.layout.fragment_game, container, false) // as HorizontalScrollView
 
         setHasOptionsMenu(true)
 

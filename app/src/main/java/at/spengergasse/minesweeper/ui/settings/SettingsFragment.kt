@@ -31,7 +31,7 @@ class SettingsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.settings_fragment, container, false)
+        val view = inflater.inflate(R.layout.fragment_settings, container, false)
 
         val difficultyGroup = view.findViewById<RadioGroup>(R.id.group_difficulty)
         val minesField = view.findViewById<EditText>(R.id.text_mines)
