@@ -55,6 +55,7 @@ class GameFragment : Fragment() {
 
         val grid = loaded.findViewById<GridView>(R.id.grid)
         grid.layoutParams.width = (board.columns * cellPx).roundToInt()
+        grid.isEnabled = true
 
         grid.numColumns = board.columns
         grid.adapter = adapter
@@ -81,6 +82,8 @@ class GameFragment : Fragment() {
                         .setNegativeButton(R.string.action_new_game) { _, _ -> newGame() }
                         .create()
                         .show()
+
+                    grid.isEnabled = false
                 }
                 Board.State.Loss -> {
                     AlertDialog.Builder(requireContext())
@@ -90,6 +93,8 @@ class GameFragment : Fragment() {
                         .setNeutralButton(R.string.action_undo_last) { _, _ -> undo() }
                         .create()
                         .show()
+
+                    grid.isEnabled = false
                 }
                 Board.State.Neutral -> Unit
             }
@@ -134,10 +139,14 @@ class GameFragment : Fragment() {
         adapter.board = board
     }
 
-    fun restartGame() = resetGame()
+    fun restartGame() {
+        grid.isEnabled = true
+        resetGame()
+    }
 
     fun newGame() {
         started = false
+        grid.isEnabled = true
         resetGame(newBoard())
 
         grid.numColumns = board.columns
@@ -145,6 +154,7 @@ class GameFragment : Fragment() {
     }
 
     fun undo(): Boolean {
+        grid.isEnabled = true
         val result = board.pop()
         if (!result) Toast.makeText(requireContext(), R.string.empty_undo_stack, Toast.LENGTH_SHORT).show()
         else adapter.notifyDataSetChanged()

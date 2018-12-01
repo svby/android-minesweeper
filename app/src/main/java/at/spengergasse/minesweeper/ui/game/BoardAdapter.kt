@@ -11,6 +11,8 @@ import kotlin.math.roundToInt
 
 class BoardAdapter(board: Board, private val size: Float) : BaseAdapter() {
 
+    var displayAll = false
+
     var board: Board = board
         set(value) {
             field = value
@@ -24,24 +26,34 @@ class BoardAdapter(board: Board, private val size: Float) : BaseAdapter() {
 
             val cell = board[position / board.columns, position % board.columns]
 
-            when {
-                cell.isRevealed -> {
-                    if (cell.isMine) {
-                        text = "X"
-                        setBackgroundResource(R.drawable.mine_square)
-                    } else {
-                        val adjacent = board.getAdjacentMines(cell.row, cell.column)
-                        text = if (adjacent == 0) "" else adjacent.toString()
-                        setBackgroundResource(R.drawable.uncovered_square)
-                    }
-                }
-                cell.isFlagged -> {
-                    text = "?"
-                    setBackgroundResource(R.drawable.flagged_square)
-                }
-                else -> {
+            if (displayAll) {
+                if (cell.isMine) {
+                    text = "X"
+                    setBackgroundResource(R.drawable.mine_square)
+                } else {
                     text = ""
-                    setBackgroundResource(R.drawable.covered_square)
+                    setBackgroundResource(R.drawable.uncovered_square)
+                }
+            } else {
+                when {
+                    cell.isRevealed -> {
+                        if (cell.isMine) {
+                            text = "X"
+                            setBackgroundResource(R.drawable.mine_square)
+                        } else {
+                            val adjacent = board.getAdjacentMines(cell.row, cell.column)
+                            text = if (adjacent == 0) "" else adjacent.toString()
+                            setBackgroundResource(R.drawable.uncovered_square)
+                        }
+                    }
+                    cell.isFlagged -> {
+                        text = "?"
+                        setBackgroundResource(R.drawable.flagged_square)
+                    }
+                    else -> {
+                        text = ""
+                        setBackgroundResource(R.drawable.covered_square)
+                    }
                 }
             }
 
