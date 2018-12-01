@@ -3,4 +3,5 @@
     <string name="victory">You won!</string>
     <string name="loss">You lost.</string>
     <string name="new_game">Start a new game</string>
+    <string name="action_settings">Settings</string>
 </resources>

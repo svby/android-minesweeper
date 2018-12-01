@@ -13,7 +13,7 @@ import at.spengergasse.minesweeper.R
 import at.spengergasse.minesweeper.game.Board
 import at.spengergasse.minesweeper.game.Field
 import at.spengergasse.minesweeper.game.generators.FieldGenerationArguments
-import at.spengergasse.minesweeper.game.generators.RandomFieldGenerator
+import at.spengergasse.minesweeper.game.generators.FullFieldGenerator
 import at.spengergasse.minesweeper.game.moves.FloodRevealMove
 import at.spengergasse.minesweeper.game.moves.ToggleFlagMove
 import at.spengergasse.minesweeper.toPx
@@ -39,12 +39,12 @@ class GameFragment : Fragment() {
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
 
-        rows = prefs.getInt("rows", 9)
+        rows = prefs.getInt("rows", 90)
         columns = prefs.getInt("columns", 9)
         mines = prefs.getInt("mines", 10)
         safe = prefs.getBoolean("safe", true)
 
-        field = RandomFieldGenerator().generate(rows, columns, FieldGenerationArguments(mines))
+        field = FullFieldGenerator().generate(rows, columns, FieldGenerationArguments(mines))
         board = Board(field)
     }
 

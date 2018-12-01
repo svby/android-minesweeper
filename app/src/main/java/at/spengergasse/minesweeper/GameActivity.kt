@@ -1,7 +1,10 @@
 package at.spengergasse.minesweeper
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import at.spengergasse.minesweeper.ui.game.GameFragment
 
 class GameActivity : AppCompatActivity() {
@@ -14,6 +17,24 @@ class GameActivity : AppCompatActivity() {
                 .replace(R.id.container, GameFragment.newInstance())
                 .commitNow()
         }
+
+        val toolbar = findViewById<Toolbar>(R.id.game_toolbar)
+        setSupportActionBar(toolbar)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.game_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_settings -> {
+                // TODO
+            }
+            else -> return false
+        }
+        return true
     }
 
 }
