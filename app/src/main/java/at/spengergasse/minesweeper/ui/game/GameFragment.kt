@@ -76,18 +76,18 @@ class GameFragment : Fragment() {
             when (state) {
                 Board.State.Win -> {
                     AlertDialog.Builder(requireContext())
-                        .setMessage(R.string.victory)
+                        .setMessage(R.string.dialog_win)
                         .setPositiveButton(R.string.action_restart) { _, _ -> restartGame() }
-                        .setNegativeButton(R.string.action_new) { _, _ -> newGame() }
+                        .setNegativeButton(R.string.action_new_game) { _, _ -> newGame() }
                         .create()
                         .show()
                 }
                 Board.State.Loss -> {
                     AlertDialog.Builder(requireContext())
-                        .setMessage(R.string.loss)
+                        .setMessage(R.string.dialog_lose)
                         .setPositiveButton(R.string.action_restart) { _, _ -> restartGame() }
-                        .setNegativeButton(R.string.action_new) { _, _ -> newGame() }
-                        .setNeutralButton(R.string.undo_last) { _, _ -> undo() }
+                        .setNegativeButton(R.string.action_new_game) { _, _ -> newGame() }
+                        .setNeutralButton(R.string.action_undo_last) { _, _ -> undo() }
                         .create()
                         .show()
                 }
