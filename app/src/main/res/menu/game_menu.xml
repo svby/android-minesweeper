@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_new"
+        android:title="@string/action_new_game"
+        android:icon="@drawable/ic_add"
+        app:showAsAction="ifRoom"
+        tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/action_restart"
+        android:title="@string/action_restart"
+        android:icon="@drawable/ic_reload"
+        app:showAsAction="ifRoom"
+        tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/action_undo"
+        android:title="@string/action_undo"
+        android:icon="@drawable/ic_undo"
+        app:showAsAction="always"
+        tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:icon="@drawable/ic_settings"
+        app:showAsAction="ifRoom"
+        tools:ignore="AppCompatResource" />
+
+</menu>

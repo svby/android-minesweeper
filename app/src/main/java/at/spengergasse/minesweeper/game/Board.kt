@@ -1,5 +1,6 @@
 package at.spengergasse.minesweeper.game
 
+import at.spengergasse.minesweeper.Cell
 import at.spengergasse.minesweeper.Point
 import at.spengergasse.minesweeper.game.moves.Move
 import java.util.*
@@ -104,6 +105,13 @@ class Board(field: Field) {
         state[whichByte] = newValue
     }
 
+    operator fun get(row: Int, column: Int): Cell {
+        if (row !in 0 until field.rows) throw ArrayIndexOutOfBoundsException(row)
+        if (column !in 0 until field.columns) throw ArrayIndexOutOfBoundsException(column)
+
+        return Cell(row, column, this)
+    }
+
     inner class ChangeSet {
         private val _moves = LinkedList<Pair<Move.Type, Point>>()
 
@@ -174,13 +182,20 @@ class Board(field: Field) {
 
         val affected = reduced.map { it.second }
 
-        if (reduced.any { it.first == Move.Type.Reveal && isMine(it.second.first, it.second.second) }) {
-            return Pair(State.Loss, affected)
+        val result = when {
+            reduced.any {
+                it.first == Move.Type.Reveal && isMine(
+                    it.second.first,
+                    it.second.second
+                )
+            } -> Pair(State.Loss, affected)
+            revealed == field.fields - field.mines -> Pair(State.Win, affected)
+            else -> Pair(State.Neutral, affected)
         }
 
-        if (revealed == field.fields - field.mines) return Pair(State.Win, affected)
+        stack.push(reduced)
 
-        return Pair(State.Neutral, affected)
+        return result
     }
 
     fun pop(): Boolean {

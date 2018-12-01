@@ -9,5 +9,5 @@ interface FieldGenerator {
 }
 
 data class FieldGenerationArguments(
-        val mines: Int
+    val mines: Int
 )
