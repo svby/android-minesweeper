@@ -22,5 +22,5 @@
         android:id="@+id/settingsFragment"
         android:name="at.spengergasse.minesweeper.ui.settings.SettingsFragment"
         android:label="@string/action_settings"
-        tools:layout="@layout/settings_fragment" />
+        tools:layout="@layout/fragment_settings" />
 </navigation>
