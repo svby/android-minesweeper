@@ -6,7 +6,13 @@ import kotlin.experimental.or
 
 class Field private constructor(private val data: ByteArray, mines: Int, val rows: Int, val columns: Int) {
 
-    constructor(rows: Int, columns: Int) : this(ByteArray(Math.ceil(rows * columns / 8.0).toInt()) { 0 }, 0, rows, columns)
+    constructor(rows: Int, columns: Int) : this(
+        ByteArray(Math.ceil(rows * columns / 8.0).toInt()) { 0 },
+        0,
+        rows,
+        columns
+    )
+
     constructor(other: Field) : this(other.data.copyOf(), other.mines, other.rows, other.columns)
 
     var mines: Int = mines
@@ -26,7 +32,8 @@ class Field private constructor(private val data: ByteArray, mines: Int, val row
 
         synchronized(dataLock) {
             val oldValue = data[whichByte]
-            val newValue = if (mine) oldValue or (1 shl whichBit).toByte() else oldValue and (1 shl whichBit).toByte().inv()
+            val newValue =
+                if (mine) oldValue or (1 shl whichBit).toByte() else oldValue and (1 shl whichBit).toByte().inv()
             if (oldValue == newValue) return
             data[whichByte] = newValue
             if (mine) mines++ else mines--

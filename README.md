@@ -8,7 +8,9 @@ Minesweeper clone written with Kotlin 1.3 for Android.
  - "Safe first click" option
    - Inspired by classic Minesweeper, when this option is active you cannot lose before the second move
  - Configurability (custom board sizes, mine counts)
- - Uses API level 16, supported by 99.5% of Android devices
+ - Uses API level 18 and Android Jetpack extensions
+ - Makes use of the AndroidX support library wherever possible
+   - Uses the navigation architecture component to allow easy navigation between fragments
  - Extensibility
    - Custom moves can be defined
    - Custom board generators can be defined
@@ -20,12 +22,13 @@ Minesweeper clone written with Kotlin 1.3 for Android.
  - Tap a field to reveal it (and potentially lose)
  - Long press on a field to flag it
    - Flagged fields cannot be revealed
-   
+
 If you reveal a mine, you lose.
 
 When all safe fields are revealed, you win!
 
 ## Screenshots
 
-![](https://i.imgur.com/XfctH4s.png)
-![](https://i.imgur.com/1kpiwnS.png)
+![](https://i.imgur.com/fFszUEa.png)
+![](https://i.imgur.com/wy0jrK8.png)
+![](https://imgur.com/1zuEop5.png)
