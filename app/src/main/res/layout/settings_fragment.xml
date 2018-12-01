@@ -51,28 +51,6 @@
             android:checked="true" />
     </RadioGroup>
 
-    <TextView
-        android:text="@string/settings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="24sp" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Switch
-            android:text="@string/safeFirst"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/switch_safe"
-            android:layout_weight="1"
-            android:checked="true"
-            android:textSize="16sp" />
-    </LinearLayout>
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -96,7 +74,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/text_mines"
-                android:inputType="number" />
+                android:inputType="number"
+                android:importantForAutofill="no" />
         </LinearLayout>
 
         <LinearLayout
@@ -117,7 +96,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/text_height"
                 android:inputType="number"
-                android:text="" />
+                android:text=""
+                android:importantForAutofill="no" />
         </LinearLayout>
 
         <LinearLayout
@@ -138,8 +118,37 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/text_width"
                 android:inputType="number"
-                android:text="" />
+                android:text=""
+                android:importantForAutofill="no" />
         </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save" />
+
+    <TextView
+        android:text="@string/settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textSize="24sp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Switch
+            android:text="@string/safeFirst"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/switch_safe"
+            android:layout_weight="1"
+            android:checked="true"
+            android:textSize="16sp" />
     </LinearLayout>
 
 </LinearLayout>

@@ -1,6 +1,5 @@
 package at.spengergasse.minesweeper.ui.game
 
-import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.LayoutInflater
@@ -11,8 +10,8 @@ import android.widget.GridView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import at.spengergasse.minesweeper.R
-import at.spengergasse.minesweeper.SettingsActivity
 import at.spengergasse.minesweeper.game.Board
 import at.spengergasse.minesweeper.game.Field
 import at.spengergasse.minesweeper.game.GameSettings
@@ -110,8 +109,7 @@ class GameFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_settings -> {
-                val intent = Intent(requireContext(), SettingsActivity::class.java)
-                startActivity(intent)
+                NavHostFragment.findNavController(this).navigate(R.id.action_gameFragment_to_settingsFragment)
                 // TODO use navigation component
             }
             R.id.action_new -> newGame()
