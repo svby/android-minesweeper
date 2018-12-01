@@ -32,10 +32,6 @@ class SettingsFragment : Fragment() {
         val safeSwitch = view.findViewById<Switch>(R.id.switch_safe)
         val save = view.findViewById<Button>(R.id.button_save)
 
-        minesField.isEnabled = false
-        rowsField.isEnabled = false
-        columnsField.isEnabled = false
-
         difficultyGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.radio_easy -> {

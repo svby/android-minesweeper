@@ -21,6 +21,7 @@ import at.spengergasse.minesweeper.game.generators.RandomFieldGenerator
 import at.spengergasse.minesweeper.game.moves.FloodRevealMove
 import at.spengergasse.minesweeper.game.moves.ToggleFlagMove
 import at.spengergasse.minesweeper.toPx
+import kotlinx.android.synthetic.main.game_fragment.*
 import kotlin.math.roundToInt
 
 class GameFragment : Fragment() {
@@ -35,15 +36,17 @@ class GameFragment : Fragment() {
     private lateinit var adapter: BoardAdapter
 
     private val cellSize: Float = 40.0f
+    private var cellPx = 0.0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val dim = toPx(cellSize, resources)
+        cellPx = toPx(cellSize, resources)
 
         board = newBoard()
-        adapter = BoardAdapter(board, dim)
-        restartGame()
+        adapter = BoardAdapter(board, cellPx)
+
+        resetGame(board)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -52,8 +55,7 @@ class GameFragment : Fragment() {
         setHasOptionsMenu(true)
 
         val grid = loaded.findViewById<GridView>(R.id.grid)
-        val dim = toPx(cellSize, resources)
-        grid.layoutParams.width = (board.columns * dim).roundToInt()
+        grid.layoutParams.width = (board.columns * cellPx).roundToInt()
 
         grid.numColumns = board.columns
         grid.adapter = adapter
@@ -139,6 +141,9 @@ class GameFragment : Fragment() {
     fun newGame() {
         started = false
         resetGame(newBoard())
+
+        grid.numColumns = board.columns
+        grid.layoutParams.width = (board.columns * cellPx).roundToInt()
     }
 
     fun undo(): Boolean {
