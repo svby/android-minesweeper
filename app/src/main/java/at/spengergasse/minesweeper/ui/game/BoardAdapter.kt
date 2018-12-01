@@ -16,13 +16,35 @@ class BoardAdapter(val board: Board, private val size: Float) : BaseAdapter() {
             gravity = Gravity.CENTER
             text = ""
 
-            val dim = size.roundToInt()
-            width = dim
-            minWidth = dim
-            height = dim
-            minHeight = dim
-            // TODO fix height
-            setBackgroundResource(R.drawable.covered_square)
+            val cell = board[position / board.columns, position % board.columns]
+
+            when {
+                cell.isRevealed -> {
+                    if (cell.isMine) {
+                        text = "X"
+                        setBackgroundResource(R.drawable.mine_square)
+                    } else {
+                        val adjacent = board.getAdjacentMines(cell.row, cell.column)
+                        text = if (adjacent == 0) "" else adjacent.toString()
+                        setBackgroundResource(R.drawable.uncovered_square)
+                    }
+                }
+                cell.isFlagged -> {
+                    text = "?"
+                    setBackgroundResource(R.drawable.flagged_square)
+                }
+                else -> {
+                    text = ""
+                    setBackgroundResource(R.drawable.covered_square)
+                }
+            }
+
+            size.roundToInt().let {
+                width = it
+                minWidth = it
+                height = it
+                minHeight = it
+            }
         }
     }
 
