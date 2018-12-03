@@ -1,7 +1,6 @@
 package at.spengergasse.minesweeper
 
 import android.os.Bundle
-import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
@@ -16,11 +15,6 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.game_toolbar)
         setSupportActionBar(toolbar)
         NavigationUI.setupWithNavController(toolbar, findNavController(R.id.nav_host))
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.game_menu, menu)
-        return true
     }
 
 }
