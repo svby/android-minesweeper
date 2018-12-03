@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -53,7 +54,11 @@ class GameFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
+        val remaining = loaded.findViewById<TextView>(R.id.text_remaining)
+        remaining.text = getString(R.string.remaining_flags).format(board.mines - board.flagged)
+
         val grid = loaded.findViewById<GridView>(R.id.grid)
+
         grid.layoutParams.width = (board.columns * cellPx).roundToInt()
         grid.isEnabled = true
 
@@ -73,6 +78,7 @@ class GameFragment : Fragment() {
             val (state) = board.push(FloodRevealMove(row, column))
 
             adapter.notifyDataSetChanged()
+            updateTurn()
 
             when (state) {
                 Board.State.Win -> {
@@ -104,6 +110,7 @@ class GameFragment : Fragment() {
             val (_, _) = board.push(ToggleFlagMove(position / board.columns, position % board.columns))
 
             adapter.notifyDataSetChanged()
+            updateTurn()
 
             true
         }
@@ -142,6 +149,8 @@ class GameFragment : Fragment() {
     fun restartGame() {
         grid.isEnabled = true
         resetGame()
+
+        text_remaining.text = getString(R.string.remaining_flags).format(board.mines - board.flagged)
     }
 
     fun newGame() {
@@ -151,13 +160,22 @@ class GameFragment : Fragment() {
 
         grid.numColumns = board.columns
         grid.layoutParams.width = (board.columns * cellPx).roundToInt()
+
+        text_remaining.text = getString(R.string.remaining_flags).format(board.mines - board.flagged)
+    }
+
+    private fun updateTurn() {
+        text_remaining.text = getString(R.string.remaining_flags).format(board.mines - board.flagged)
     }
 
     fun undo(): Boolean {
         grid.isEnabled = true
         val result = board.pop()
         if (!result) Toast.makeText(requireContext(), R.string.empty_undo_stack, Toast.LENGTH_SHORT).show()
-        else adapter.notifyDataSetChanged()
+        else {
+            adapter.notifyDataSetChanged()
+            updateTurn()
+        }
         return result
     }
 
