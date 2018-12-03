@@ -8,13 +8,13 @@ import android.widget.EditText
 import androidx.lifecycle.MutableLiveData
 import java.math.BigInteger
 
-const val KEY_BOARD = "BOARD"
+const val KEY_BOARD = "minesweeper:state:board"
 
-const val KEY_PRESET = "PRESET"
-const val KEY_ROWS = "ROWS"
-const val KEY_COLUMNS = "COLUMNS"
-const val KEY_MINES = "MINES"
-const val KEY_SAFE = "SAFE"
+const val KEY_PRESET = "minesweeper:config:preset"
+const val KEY_ROWS = "minesweeper:config:rows"
+const val KEY_COLUMNS = "minesweeper:config:columns"
+const val KEY_MINES = "minesweeper:config:mines"
+const val KEY_SAFE = "minesweeper:config:safe"
 
 const val PRESET_EASY = 0
 const val PRESET_MEDIUM = 1
