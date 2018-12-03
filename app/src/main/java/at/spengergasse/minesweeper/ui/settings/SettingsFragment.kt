@@ -1,6 +1,5 @@
 package at.spengergasse.minesweeper.ui.settings
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.Editable
@@ -8,64 +7,47 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.RadioGroup
-import android.widget.Switch
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import at.spengergasse.minesweeper.*
 import at.spengergasse.minesweeper.game.GameSettings
+import kotlinx.android.synthetic.main.fragment_settings.*
 import java.math.BigInteger
 
 class SettingsFragment : Fragment() {
 
-    private val MAX = BigInteger.valueOf(Integer.MAX_VALUE.toLong())
-
-    lateinit var prefs: SharedPreferences
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+    companion object {
+        private val MAX = BigInteger.valueOf(MAX_SIZE.toLong())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_settings, container, false)
+    private val prefs by lazy { PreferenceManager.getDefaultSharedPreferences(requireContext()) }
 
-        val difficultyGroup = view.findViewById<RadioGroup>(R.id.group_difficulty)
-        val minesField = view.findViewById<EditText>(R.id.text_mines)
-        val rowsField = view.findViewById<EditText>(R.id.text_height)
-        val columnsField = view.findViewById<EditText>(R.id.text_width)
-        val safeSwitch = view.findViewById<Switch>(R.id.switch_safe)
-        val saveButton = view.findViewById<Button>(R.id.button_save)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+        inflater.inflate(R.layout.fragment_settings, container, false)
 
-        difficultyGroup.setOnCheckedChangeListener { group, checkedId ->
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        group_difficulty.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
-                R.id.radio_custom -> {
-                    minesField.isEnabled = true
-                    rowsField.isEnabled = true
-                    columnsField.isEnabled = true
-                }
+                R.id.radio_custom -> layout_settings.childrenRecursive.forEach { it.isEnabled = true }
                 else -> {
-                    minesField.isEnabled = false
-                    rowsField.isEnabled = false
-                    columnsField.isEnabled = false
+                    layout_settings.childrenRecursive.forEach { it.isEnabled = false }
                     when (checkedId) {
                         R.id.radio_easy -> {
-                            columnsField.setText(EASY_COLUMNS.toString())
-                            rowsField.setText(EASY_ROWS.toString())
-                            minesField.setText(EASY_MINES.toString())
+                            text_width.setText(EASY_COLUMNS.toString())
+                            text_height.setText(EASY_ROWS.toString())
+                            text_mines.setText(EASY_MINES.toString())
                         }
                         R.id.radio_medium -> {
-                            columnsField.setText(MEDIUM_COLUMNS.toString())
-                            rowsField.setText(MEDIUM_ROWS.toString())
-                            minesField.setText(MEDIUM_MINES.toString())
+                            text_width.setText(MEDIUM_COLUMNS.toString())
+                            text_height.setText(MEDIUM_ROWS.toString())
+                            text_mines.setText(MEDIUM_MINES.toString())
                         }
                         R.id.radio_hard -> {
-                            columnsField.setText(HARD_COLUMNS.toString())
-                            rowsField.setText(HARD_ROWS.toString())
-                            minesField.setText(HARD_MINES.toString())
+                            text_width.setText(HARD_COLUMNS.toString())
+                            text_height.setText(HARD_ROWS.toString())
+                            text_mines.setText(HARD_MINES.toString())
                         }
                     }
                 }
@@ -73,10 +55,10 @@ class SettingsFragment : Fragment() {
         }
 
         when (prefs.getInt(KEY_PRESET, -1)) {
-            PRESET_EASY -> difficultyGroup.check(R.id.radio_easy)
-            PRESET_MEDIUM -> difficultyGroup.check(R.id.radio_medium)
-            PRESET_HARD -> difficultyGroup.check(R.id.radio_hard)
-            else -> difficultyGroup.check(R.id.radio_custom)
+            PRESET_EASY -> group_difficulty.check(R.id.radio_easy)
+            PRESET_MEDIUM -> group_difficulty.check(R.id.radio_medium)
+            PRESET_HARD -> group_difficulty.check(R.id.radio_hard)
+            else -> group_difficulty.check(R.id.radio_custom)
         }
 
         val watcher = object : TextWatcher {
@@ -88,7 +70,7 @@ class SettingsFragment : Fragment() {
                 else if (s.isNotEmpty()) {
                     val bigInteger = s.toString().toBigInteger()
                     if (bigInteger > MAX) {
-                        for (length in 10 downTo 9) {
+                        for (length in s.length downTo 1) {
                             val cut = s.toString().substring(0, length)
                             if (cut.toBigInteger() <= MAX) {
                                 s.replace(0, s.length, cut)
@@ -97,24 +79,25 @@ class SettingsFragment : Fragment() {
                         }
                     }
                 }
-                saveButton.isEnabled = !s.toString().isBlank()
+                button_save.isEnabled = !s.toString().isBlank()
             }
         }
 
-        minesField.addTextChangedListener(watcher)
-        rowsField.addTextChangedListener(watcher)
-        columnsField.addTextChangedListener(watcher)
+        text_mines.addTextChangedListener(watcher)
+        text_width.addTextChangedListener(watcher)
+        text_height.addTextChangedListener(watcher)
 
         val loaded = GameSettings.load(prefs)
-        minesField.setText(loaded.mines.toString())
-        rowsField.setText(loaded.rows.toString())
-        columnsField.setText(loaded.columns.toString())
-        safeSwitch.isChecked = loaded.safe
 
-        safeSwitch.setOnCheckedChangeListener { _, isChecked -> prefs.edit { putBoolean(KEY_SAFE, isChecked) } }
+        text_mines.setText(loaded.mines.toString())
+        text_height.setText(loaded.rows.toString())
+        text_width.setText(loaded.columns.toString())
+        switch_safe.isChecked = loaded.safe
 
-        saveButton.setOnClickListener {
-            val checked = difficultyGroup.checkedRadioButtonId
+        switch_safe.setOnCheckedChangeListener { _, isChecked -> prefs.edit { putBoolean(KEY_SAFE, isChecked) } }
+
+        button_save.setOnClickListener {
+            val checked = group_difficulty.checkedRadioButtonId
             prefs.edit {
                 remove(KEY_MINES)
                 remove(KEY_ROWS)
@@ -126,15 +109,13 @@ class SettingsFragment : Fragment() {
                     R.id.radio_medium -> putInt(KEY_PRESET, PRESET_MEDIUM)
                     R.id.radio_hard -> putInt(KEY_PRESET, PRESET_HARD)
                     R.id.radio_custom -> {
-                        rowsField.text.toString().toIntOrNull()?.let { putInt(KEY_ROWS, it) }
-                        columnsField.text.toString().toIntOrNull()?.let { putInt(KEY_COLUMNS, it) }
-                        minesField.text.toString().toIntOrNull()?.let { putInt(KEY_MINES, it) }
+                        text_height.text.toString().toIntOrNull()?.let { putInt(KEY_ROWS, it) }
+                        text_width.text.toString().toIntOrNull()?.let { putInt(KEY_COLUMNS, it) }
+                        text_mines.text.toString().toIntOrNull()?.let { putInt(KEY_MINES, it) }
                     }
                 }
             }
         }
-
-        return view
     }
 
 }

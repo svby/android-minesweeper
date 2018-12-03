@@ -38,6 +38,7 @@ class GameFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        initialSetup()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
@@ -46,7 +47,7 @@ class GameFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        newGame()
+        resetLayout()
 
         grid.layoutParams.width = (board.columns * cellPx).roundToInt()
         grid.isEnabled = true
@@ -127,11 +128,10 @@ class GameFragment : Fragment() {
         board.clear()
         adapter.board = board
 
-        updateTurn()
+        resetLayout()
     }
 
-    fun newGame() {
-        grid.isEnabled = true
+    private fun initialSetup() {
         started = false
 
         settings = GameSettings.load(PreferenceManager.getDefaultSharedPreferences(activity))
@@ -139,6 +139,16 @@ class GameFragment : Fragment() {
 
         started = false
         board = Board(field)
+    }
+
+    fun newGame() {
+        initialSetup()
+        resetLayout()
+        updateTurn()
+    }
+
+    fun resetLayout() {
+        grid.isEnabled = true
 
         adapter.board = board
 
