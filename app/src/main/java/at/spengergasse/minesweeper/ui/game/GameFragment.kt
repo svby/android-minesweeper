@@ -2,12 +2,11 @@ package at.spengergasse.minesweeper.ui.game
 
 import android.os.Bundle
 import android.preference.PreferenceManager
+
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -27,37 +26,27 @@ import kotlin.math.roundToInt
 class GameFragment : Fragment() {
 
     private val generator = RandomFieldGenerator()
+    private lateinit var settings: GameSettings
+
+    private val adapter by lazy { BoardAdapter(board, cellPx) }
+    private val cellPx by lazy { toPx(40.0f, resources) }
 
     private lateinit var field: Field
     private lateinit var board: Board
     private var started = false
 
-    private lateinit var settings: GameSettings
-    private lateinit var adapter: BoardAdapter
-
-    private val cellSize: Float = 40.0f
-    private var cellPx = 0.0f
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        cellPx = toPx(cellSize, resources)
-
-        board = newBoard()
-        adapter = BoardAdapter(board, cellPx)
-
-        resetGame(board)
+        setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val loaded = inflater.inflate(R.layout.fragment_game, container, false) // as HorizontalScrollView
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+        inflater.inflate(R.layout.fragment_game, container, false)
 
-        setHasOptionsMenu(true)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-        val remaining = loaded.findViewById<TextView>(R.id.text_remaining)
-        remaining.text = getString(R.string.remaining_flags).format(board.mines - board.flagged)
-
-        val grid = loaded.findViewById<GridView>(R.id.grid)
+        newGame()
 
         grid.layoutParams.width = (board.columns * cellPx).roundToInt()
         grid.isEnabled = true
@@ -65,7 +54,9 @@ class GameFragment : Fragment() {
         grid.numColumns = board.columns
         grid.adapter = adapter
 
-        grid.setOnItemClickListener { parent, view, position, id ->
+        updateTurn()
+
+        grid.setOnItemClickListener { _, _, position, _ ->
             val row = position / board.columns
             val column = position % board.columns
 
@@ -106,7 +97,7 @@ class GameFragment : Fragment() {
             }
         }
 
-        grid.setOnItemLongClickListener { parent, view, position, id ->
+        grid.setOnItemLongClickListener { _, _, position, _ ->
             val (_, _) = board.push(ToggleFlagMove(position / board.columns, position % board.columns))
 
             adapter.notifyDataSetChanged()
@@ -114,16 +105,11 @@ class GameFragment : Fragment() {
 
             true
         }
-
-        return loaded
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_settings -> {
-                NavHostFragment.findNavController(this).navigate(R.id.action_gameFragment_to_settingsFragment)
-                // TODO use navigation component
-            }
+            R.id.action_settings -> NavHostFragment.findNavController(this).navigate(R.id.action_gameFragment_to_settingsFragment)
             R.id.action_new -> newGame()
             R.id.action_restart -> restartGame()
             R.id.action_undo -> undo()
@@ -132,40 +118,34 @@ class GameFragment : Fragment() {
         return true
     }
 
-    fun newBoard(): Board {
-        settings = GameSettings.load(PreferenceManager.getDefaultSharedPreferences(activity))
-        field = generator.generate(settings.rows, settings.columns, FieldGenerationArguments(settings.mines))
-
-        started = false
-        return Board(field)
-    }
-
-    fun resetGame(board: Board = this.board) {
-        board.clear()
-        this.board = board
-        adapter.board = board
+    private fun updateTurn() {
+        text_remaining.text = getString(R.string.remaining_flags).format(board.mines - board.flagged)
     }
 
     fun restartGame() {
         grid.isEnabled = true
-        resetGame()
+        board.clear()
+        adapter.board = board
 
-        text_remaining.text = getString(R.string.remaining_flags).format(board.mines - board.flagged)
+        updateTurn()
     }
 
     fun newGame() {
-        started = false
         grid.isEnabled = true
-        resetGame(newBoard())
+        started = false
+
+        settings = GameSettings.load(PreferenceManager.getDefaultSharedPreferences(activity))
+        field = generator.generate(settings.rows, settings.columns, FieldGenerationArguments(settings.mines))
+
+        started = false
+        board = Board(field)
+
+        adapter.board = board
 
         grid.numColumns = board.columns
         grid.layoutParams.width = (board.columns * cellPx).roundToInt()
 
-        text_remaining.text = getString(R.string.remaining_flags).format(board.mines - board.flagged)
-    }
-
-    private fun updateTurn() {
-        text_remaining.text = getString(R.string.remaining_flags).format(board.mines - board.flagged)
+        updateTurn()
     }
 
     fun undo(): Boolean {

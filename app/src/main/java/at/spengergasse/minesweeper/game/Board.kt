@@ -220,6 +220,7 @@ class Board(field: Field) {
     fun clear() {
         Arrays.fill(state, 0)
         revealed = 0
+        flagged = 0
     }
 
 }
