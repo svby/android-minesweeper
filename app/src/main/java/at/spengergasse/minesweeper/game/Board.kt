@@ -2,31 +2,56 @@ package at.spengergasse.minesweeper.game
 
 import at.spengergasse.minesweeper.Cell
 import at.spengergasse.minesweeper.Point
+import at.spengergasse.minesweeper.boundsCheck
 import at.spengergasse.minesweeper.game.moves.Move
 import java.util.*
 import kotlin.experimental.and
 import kotlin.experimental.inv
 import kotlin.experimental.or
 
-class Board(field: Field) {
+class Board private constructor(private val field: Field, private val state: ByteArray) {
 
-    enum class State {
-        Win,
-        Loss,
-        Neutral
-    }
-
-    private var revealed = 0
-    private val field = Field(field)
-    private val state = ByteArray(Math.ceil(field.rows * field.columns / 4.0).toInt()) { 0 }
+    enum class State { Win, Loss, Neutral }
 
     val rows get() = field.rows
     val columns get() = field.columns
-
     val mines get() = field.mines
 
-    var flagged: Int = 0
+    var revealed = 0
         private set
+
+    var flagged = 0
+        private set
+
+    constructor(field: Field) : this(Field(field), createEmptyDataArray(field.rows, field.columns))
+
+    private companion object {
+        @JvmStatic
+        private fun createEmptyDataArray(rows: Int, columns: Int) =
+            ByteArray(Math.ceil(rows * columns / 4.0).toInt()) { 0 }
+
+        @JvmStatic
+        private fun isRevealedUnchecked(field: Field, data: ByteArray, row: Int, column: Int): Boolean {
+            val whichField = field.columns * row + column
+            val whichByte = whichField ushr 2
+            val whichQuarter = whichField % 4
+            val shift = whichQuarter shl 1
+
+            val bits = data[whichByte].toInt() ushr shift
+            return (bits and 1) == 1
+        }
+
+        @JvmStatic
+        private fun isFlaggedUnchecked(field: Field, data: ByteArray, row: Int, column: Int): Boolean {
+            val whichField = field.columns * row + column
+            val whichByte = whichField ushr 2
+            val whichQuarter = whichField % 4
+            val shift = whichQuarter shl 1
+
+            val bits = data[whichByte].toInt() ushr shift
+            return (bits and 0b10) == 0b10
+        }
+    }
 
     fun ensureSafe(row: Int, column: Int) {
         if (field[row, column]) {
@@ -44,44 +69,18 @@ class Board(field: Field) {
         }
     }
 
-    private fun uncheckedIsRevealed(row: Int, column: Int): Boolean {
-        val whichField = field.columns * row + column
-        val whichByte = whichField ushr 2
-        val whichQuarter = whichField % 4
-        val shift = whichQuarter shl 1
-
-        val bits = state[whichByte].toInt() ushr shift
-        return (bits and 1) == 1
-    }
-
-    private fun uncheckedIsFlagged(row: Int, column: Int): Boolean {
-        val whichField = field.columns * row + column
-        val whichByte = whichField ushr 2
-        val whichQuarter = whichField % 4
-        val shift = whichQuarter shl 1
-
-        val bits = state[whichByte].toInt() ushr shift
-        return (bits and 0b10) == 0b10
-    }
-
     fun isRevealed(row: Int, column: Int): Boolean {
-        if (row !in 0 until field.rows) throw ArrayIndexOutOfBoundsException(row)
-        if (column !in 0 until field.columns) throw ArrayIndexOutOfBoundsException(column)
-
-        return uncheckedIsRevealed(row, column)
+        boundsCheck(rows, columns, row, column)
+        return isRevealedUnchecked(field, state, row, column)
     }
 
     fun isFlagged(row: Int, column: Int): Boolean {
-        if (row !in 0 until field.rows) throw ArrayIndexOutOfBoundsException(row)
-        if (column !in 0 until field.columns) throw ArrayIndexOutOfBoundsException(column)
-
-        return uncheckedIsFlagged(row, column)
+        boundsCheck(rows, columns, row, column)
+        return isFlaggedUnchecked(field, state, row, column)
     }
 
     fun isMine(row: Int, column: Int): Boolean {
-        if (row !in 0 until field.rows) throw ArrayIndexOutOfBoundsException(row)
-        if (column !in 0 until field.columns) throw ArrayIndexOutOfBoundsException(column)
-
+        boundsCheck(rows, columns, row, column)
         return field[row, column]
     }
 
@@ -95,6 +94,7 @@ class Board(field: Field) {
 
         val oldValue = state[whichByte]
         val newValue = if (revealed) oldValue or (1 shl shift).toByte() else oldValue and (1 shl shift).toByte().inv()
+
         state[whichByte] = newValue
     }
 
@@ -116,9 +116,7 @@ class Board(field: Field) {
     }
 
     operator fun get(row: Int, column: Int): Cell {
-        if (row !in 0 until field.rows) throw ArrayIndexOutOfBoundsException(row)
-        if (column !in 0 until field.columns) throw ArrayIndexOutOfBoundsException(column)
-
+        boundsCheck(rows, columns, row, column)
         return Cell(row, column, this)
     }
 
@@ -128,31 +126,25 @@ class Board(field: Field) {
         val moves: List<Pair<Move.Type, Point>> get() = Collections.unmodifiableList(_moves)
 
         fun reveal(row: Int, column: Int) {
-            if (row !in 0 until field.rows) throw ArrayIndexOutOfBoundsException(row)
-            if (column !in 0 until field.columns) throw ArrayIndexOutOfBoundsException(column)
-
+            boundsCheck(field.rows, field.columns, row, column)
             _moves.add(Pair(Move.Type.Reveal, Point(row, column)))
         }
 
         fun flag(row: Int, column: Int) {
-            if (row !in 0 until field.rows) throw ArrayIndexOutOfBoundsException(row)
-            if (column !in 0 until field.columns) throw ArrayIndexOutOfBoundsException(column)
-
+            boundsCheck(field.rows, field.columns, row, column)
             _moves.add(Pair(Move.Type.Flag, Point(row, column)))
         }
 
         fun unflag(row: Int, column: Int) {
-            if (row !in 0 until field.rows) throw ArrayIndexOutOfBoundsException(row)
-            if (column !in 0 until field.columns) throw ArrayIndexOutOfBoundsException(column)
-
+            boundsCheck(field.rows, field.columns, row, column)
             _moves.add(Pair(Move.Type.RemoveFlag, Point(row, column)))
         }
     }
 
     private fun isRedundant(type: Move.Type, point: Point) = when (type) {
-        Move.Type.Reveal -> uncheckedIsRevealed(point.first, point.second)
-        Move.Type.Flag -> uncheckedIsFlagged(point.first, point.second)
-        Move.Type.RemoveFlag -> !uncheckedIsFlagged(point.first, point.second)
+        Move.Type.Reveal -> isRevealedUnchecked(field, state, point.first, point.second)
+        Move.Type.Flag -> isFlaggedUnchecked(field, state, point.first, point.second)
+        Move.Type.RemoveFlag -> !isFlaggedUnchecked(field, state, point.first, point.second)
     }
 
     private val stack = ArrayDeque<List<Pair<Move.Type, Point>>>()

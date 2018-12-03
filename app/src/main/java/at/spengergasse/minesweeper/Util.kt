@@ -60,3 +60,8 @@ fun <T> MutableLiveData<T>.notify() {
 
 fun toPx(value: Float, resources: Resources) =
     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics)
+
+fun boundsCheck(rows: Int, columns: Int, row: Int, column: Int) {
+    if (row !in 0 until rows) throw ArrayIndexOutOfBoundsException(row)
+    if (column !in 0 until columns) throw ArrayIndexOutOfBoundsException(column)
+}

@@ -1,5 +1,6 @@
 package at.spengergasse.minesweeper.game
 
+import at.spengergasse.minesweeper.boundsCheck
 import kotlin.experimental.and
 import kotlin.experimental.inv
 import kotlin.experimental.or
@@ -10,7 +11,7 @@ class Field private constructor(
 
     val fields = rows * columns
 
-    var mines: Int = mines
+    var mines = mines
         private set
 
     constructor(rows: Int, columns: Int) : this(createEmptyDataArray(rows, columns), 0, rows, columns)
@@ -40,12 +41,6 @@ class Field private constructor(
             val whichBit = whichField % 8
 
             return data[whichByte].toInt() and 0b11111111 ushr whichBit and 1 == 1
-        }
-
-        @JvmStatic
-        private fun boundsCheck(rows: Int, columns: Int, row: Int, column: Int) {
-            if (row !in 0 until rows) throw ArrayIndexOutOfBoundsException(row)
-            if (column !in 0 until columns) throw ArrayIndexOutOfBoundsException(column)
         }
     }
 
