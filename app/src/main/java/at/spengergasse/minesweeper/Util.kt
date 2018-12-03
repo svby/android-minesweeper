@@ -30,8 +30,7 @@ const val HARD_ROWS = 30
 const val HARD_COLUMNS = 16
 const val HARD_MINES = 99
 
-const val MAX_ROWS = 30
-const val MAX_COLUMNS = 20
+const val MAX_SIZE = 99
 
 typealias Point = Pair<Int, Int>
 

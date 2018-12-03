@@ -3,123 +3,115 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.settings.SettingsFragment"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="10dp"
+    tools:context=".ui.settings.SettingsFragment">
 
     <TextView
-        android:text="@string/category_difficulty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/category_difficulty"
         android:textSize="30sp" />
 
     <RadioGroup
+        android:id="@+id/group_difficulty"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/group_difficulty">
+        android:layout_height="wrap_content">
 
         <RadioButton
-            android:text="@string/difficulty_easy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/radio_easy"
-            android:layout_weight="1"
-            android:checked="false" />
-
-        <RadioButton
-            android:text="@string/difficulty_medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/difficulty_easy" />
+
+        <RadioButton
             android:id="@+id/radio_medium"
-            android:layout_weight="1"
-            android:checked="false" />
-
-        <RadioButton
-            android:text="@string/difficulty_hard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/difficulty_medium" />
+
+        <RadioButton
             android:id="@+id/radio_hard"
-            android:layout_weight="1"
-            android:checked="false" />
-
-        <RadioButton
-            android:text="@string/difficulty_custom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/difficulty_hard" />
+
+        <RadioButton
             android:id="@+id/radio_custom"
-            android:layout_weight="1"
-            android:checked="true" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/difficulty_custom" />
     </RadioGroup>
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/layout_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/layout_settings">
+        android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="3"
+                android:labelFor="@id/text_mines"
                 android:text="@string/config_mines"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:ems="3"
-                android:labelFor="@id/text_mines" />
+                android:textSize="16sp" />
 
             <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/text_mines"
-                android:inputType="number"
-                android:importantForAutofill="no" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:importantForAutofill="no"
+                android:inputType="number" />
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="3"
+                android:labelFor="@id/text_height"
                 android:text="@string/config_rows"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:ems="3"
-                android:labelFor="@id/text_height" />
+                android:textSize="16sp" />
 
             <EditText
+                android:id="@+id/text_height"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/text_height"
+                android:importantForAutofill="no"
                 android:inputType="number"
-                android:text=""
-                android:importantForAutofill="no" />
+                android:text="" />
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <TextView
-                android:text="@string/config_columns"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
                 android:ems="3"
-                android:labelFor="@id/text_width" />
+                android:labelFor="@id/text_width"
+                android:text="@string/config_columns"
+                android:textSize="16sp" />
 
             <EditText
+                android:id="@+id/text_width"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/text_width"
+                android:importantForAutofill="no"
                 android:inputType="number"
-                android:text=""
-                android:importantForAutofill="no" />
+                android:text="" />
         </LinearLayout>
     </LinearLayout>
 
@@ -130,24 +122,24 @@
         android:text="@string/action_save_config" />
 
     <TextView
-        android:text="@string/category_config"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:text="@string/category_config"
         android:textSize="24sp" />
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <Switch
-            android:text="@string/config_safe_first"
+            android:id="@+id/switch_safe"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/switch_safe"
             android:layout_weight="1"
             android:checked="true"
+            android:text="@string/config_safe_first"
             android:textSize="16sp" />
     </LinearLayout>
 
