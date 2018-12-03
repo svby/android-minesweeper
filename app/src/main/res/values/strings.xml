@@ -24,4 +24,7 @@
     <string name="action_undo">Undo</string>
     <string name="action_undo_last">Undo last move</string>
     <string name="empty_undo_stack">Nothing to undo!</string>
+
+    <string name="remaining_flags">%s flag(s) remaining</string>
+    <string name="action_reveal">Reveal mines</string>
 </resources>
