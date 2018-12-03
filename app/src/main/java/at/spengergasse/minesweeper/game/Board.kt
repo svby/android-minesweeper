@@ -1,5 +1,7 @@
 package at.spengergasse.minesweeper.game
 
+import android.os.Parcel
+import android.os.Parcelable
 import at.spengergasse.minesweeper.Cell
 import at.spengergasse.minesweeper.Point
 import at.spengergasse.minesweeper.boundsCheck
@@ -9,7 +11,9 @@ import kotlin.experimental.and
 import kotlin.experimental.inv
 import kotlin.experimental.or
 
-class Board private constructor(private val field: Field, private val state: ByteArray) {
+class Board private constructor(
+    private val field: Field, private val state: ByteArray
+) : Parcelable {
 
     enum class State { Win, Loss, Neutral }
 
@@ -25,33 +29,7 @@ class Board private constructor(private val field: Field, private val state: Byt
 
     constructor(field: Field) : this(Field(field), createEmptyDataArray(field.rows, field.columns))
 
-    private companion object {
-        @JvmStatic
-        private fun createEmptyDataArray(rows: Int, columns: Int) =
-            ByteArray(Math.ceil(rows * columns / 4.0).toInt()) { 0 }
-
-        @JvmStatic
-        private fun isRevealedUnchecked(field: Field, data: ByteArray, row: Int, column: Int): Boolean {
-            val whichField = field.columns * row + column
-            val whichByte = whichField ushr 2
-            val whichQuarter = whichField % 4
-            val shift = whichQuarter shl 1
-
-            val bits = data[whichByte].toInt() ushr shift
-            return (bits and 1) == 1
-        }
-
-        @JvmStatic
-        private fun isFlaggedUnchecked(field: Field, data: ByteArray, row: Int, column: Int): Boolean {
-            val whichField = field.columns * row + column
-            val whichByte = whichField ushr 2
-            val whichQuarter = whichField % 4
-            val shift = whichQuarter shl 1
-
-            val bits = data[whichByte].toInt() ushr shift
-            return (bits and 0b10) == 0b10
-        }
-    }
+    // region Implementation
 
     fun ensureSafe(row: Int, column: Int) {
         if (field[row, column]) {
@@ -214,5 +192,65 @@ class Board private constructor(private val field: Field, private val state: Byt
         revealed = 0
         flagged = 0
     }
+
+    // endregion Implementation
+
+    // region Util
+
+    private companion object {
+        @JvmStatic
+        private fun createEmptyDataArray(rows: Int, columns: Int) =
+            ByteArray(Math.ceil(rows * columns / 4.0).toInt()) { 0 }
+
+        @JvmStatic
+        private fun isRevealedUnchecked(field: Field, data: ByteArray, row: Int, column: Int): Boolean {
+            val whichField = field.columns * row + column
+            val whichByte = whichField ushr 2
+            val whichQuarter = whichField % 4
+            val shift = whichQuarter shl 1
+
+            val bits = data[whichByte].toInt() ushr shift
+            return (bits and 1) == 1
+        }
+
+        @JvmStatic
+        private fun isFlaggedUnchecked(field: Field, data: ByteArray, row: Int, column: Int): Boolean {
+            val whichField = field.columns * row + column
+            val whichByte = whichField ushr 2
+            val whichQuarter = whichField % 4
+            val shift = whichQuarter shl 1
+
+            val bits = data[whichByte].toInt() ushr shift
+            return (bits and 0b10) == 0b10
+        }
+
+        @JvmField
+        val CREATOR = object : Parcelable.Creator<Board> {
+            override fun createFromParcel(parcel: Parcel): Board {
+                val field = parcel.readParcelable<Field>(Board::class.java.classLoader)
+                    ?: throw IllegalStateException("Field could not be deparceled")
+                val state = createEmptyDataArray(field.rows, field.columns)
+                parcel.readByteArray(state)
+                return Board(field, state)
+            }
+
+            override fun newArray(size: Int) = arrayOfNulls<Board>(size)
+        }
+    }
+
+    // endregion Util
+
+    // region Parcelable
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        with(parcel) {
+            writeParcelable(field, 0)
+            writeByteArray(state)
+        }
+    }
+
+    override fun describeContents() = 0
+
+    // endregion Parcelable
 
 }

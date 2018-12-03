@@ -2,15 +2,15 @@ package at.spengergasse.minesweeper.ui.game
 
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.view.*
-
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
+import at.spengergasse.minesweeper.KEY_BOARD
 import at.spengergasse.minesweeper.R
 import at.spengergasse.minesweeper.game.Board
-import at.spengergasse.minesweeper.game.Field
 import at.spengergasse.minesweeper.game.GameSettings
 import at.spengergasse.minesweeper.game.generators.FieldGenerationArguments
 import at.spengergasse.minesweeper.game.generators.RandomFieldGenerator
@@ -28,14 +28,13 @@ class GameFragment : Fragment() {
     private val adapter by lazy { BoardAdapter(board, cellPx) }
     private val cellPx by lazy { toPx(40.0f, resources) }
 
-    private lateinit var field: Field
     private lateinit var board: Board
     private var started = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        initialSetup()
+        initialSetup(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
@@ -118,6 +117,16 @@ class GameFragment : Fragment() {
         return true
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        Log.v("Minesweeper", "saving")
+        with(outState) {
+            putParcelable(KEY_BOARD, board)
+            // TODO persist entire state
+        }
+    }
+
     private fun updateTurn() {
         text_remaining.text = getString(R.string.remaining_flags).format(board.mines - board.flagged)
     }
@@ -130,18 +139,21 @@ class GameFragment : Fragment() {
         resetLayout()
     }
 
-    private fun initialSetup() {
+    private fun initialSetup(bundle: Bundle?) {
         started = false
 
+        val stored = bundle?.getParcelable<Board>(KEY_BOARD)
+        Log.v("Minesweeper", stored.toString())
+
         settings = GameSettings.load(PreferenceManager.getDefaultSharedPreferences(activity))
-        field = generator.generate(settings.rows, settings.columns, FieldGenerationArguments(settings.mines))
+        val field = generator.generate(settings.rows, settings.columns, FieldGenerationArguments(settings.mines))
 
         started = false
         board = Board(field)
     }
 
     fun newGame() {
-        initialSetup()
+        initialSetup(null)
         resetLayout()
         updateTurn()
     }

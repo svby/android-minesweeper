@@ -8,6 +8,8 @@ import android.widget.EditText
 import androidx.lifecycle.MutableLiveData
 import java.math.BigInteger
 
+const val KEY_BOARD = "BOARD"
+
 const val KEY_PRESET = "PRESET"
 const val KEY_ROWS = "ROWS"
 const val KEY_COLUMNS = "COLUMNS"
