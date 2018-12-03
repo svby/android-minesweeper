@@ -23,6 +23,11 @@ class Board(field: Field) {
     val rows get() = field.rows
     val columns get() = field.columns
 
+    val mines get() = field.mines
+
+    var flagged: Int = 0
+        private set
+
     fun ensureSafe(row: Int, column: Int) {
         if (field[row, column]) {
             for (i in 0 until field.rows) {
@@ -101,6 +106,11 @@ class Board(field: Field) {
 
         val oldValue = state[whichByte]
         val newValue = if (flagged) oldValue or (1 shl shift).toByte() else oldValue and (1 shl shift).toByte().inv()
+
+        if (oldValue != newValue) this.flagged += when (flagged) {
+            true -> 1
+            false -> -1
+        }
 
         state[whichByte] = newValue
     }
