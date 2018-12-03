@@ -6,6 +6,11 @@ import kotlin.experimental.or
 
 class Field private constructor(private val data: ByteArray, mines: Int, val rows: Int, val columns: Int) {
 
+    val fields = rows * columns
+
+    var mines: Int = mines
+        private set
+
     constructor(rows: Int, columns: Int) : this(
         ByteArray(Math.ceil(rows * columns / 8.0).toInt()) { 0 },
         0,
@@ -15,13 +20,6 @@ class Field private constructor(private val data: ByteArray, mines: Int, val row
 
     constructor(other: Field) : this(other.data.copyOf(), other.mines, other.rows, other.columns)
 
-    var mines: Int = mines
-        private set
-
-    private val dataLock = Any()
-
-    val fields = rows * columns
-
     operator fun set(row: Int, column: Int, mine: Boolean) {
         if (row !in 0 until rows) throw ArrayIndexOutOfBoundsException(row)
         if (column !in 0 until columns) throw ArrayIndexOutOfBoundsException(column)
@@ -29,15 +27,12 @@ class Field private constructor(private val data: ByteArray, mines: Int, val row
         val whichField = columns * row + column
         val whichByte = whichField ushr 3
         val whichBit = whichField % 8
-
-        synchronized(dataLock) {
             val oldValue = data[whichByte]
             val newValue =
                 if (mine) oldValue or (1 shl whichBit).toByte() else oldValue and (1 shl whichBit).toByte().inv()
             if (oldValue == newValue) return
             data[whichByte] = newValue
             if (mine) mines++ else mines--
-        }
     }
 
     private fun unsynchronizedGetInt(row: Int, column: Int): Int {
@@ -49,7 +44,6 @@ class Field private constructor(private val data: ByteArray, mines: Int, val row
         if (row !in 0 until rows) throw ArrayIndexOutOfBoundsException(row)
         if (column !in 0 until columns) throw ArrayIndexOutOfBoundsException(column)
 
-        synchronized(dataLock) {
             return 0 +
                     unsynchronizedGetInt(row, column - 1) +
                     unsynchronizedGetInt(row - 1, column - 1) +
@@ -59,7 +53,6 @@ class Field private constructor(private val data: ByteArray, mines: Int, val row
                     unsynchronizedGetInt(row + 1, column + 1) +
                     unsynchronizedGetInt(row + 1, column) +
                     unsynchronizedGetInt(row + 1, column - 1)
-        }
     }
 
     private fun unsynchronizedUncheckedGet(row: Int, column: Int): Boolean {
@@ -75,9 +68,7 @@ class Field private constructor(private val data: ByteArray, mines: Int, val row
         val whichByte = whichField ushr 3
         val whichBit = whichField % 8
 
-        synchronized(dataLock) {
             return data[whichByte].toInt() and 0b11111111 ushr whichBit and 1 == 1
-        }
     }
 
     operator fun get(row: Int, column: Int): Boolean {
