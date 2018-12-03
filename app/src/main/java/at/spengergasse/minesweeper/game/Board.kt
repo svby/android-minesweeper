@@ -85,7 +85,7 @@ class Board(field: Field) {
         return field[row, column]
     }
 
-    fun getAdjacentMines(row: Int, column: Int) = field.getAdjacent(row, column)
+    fun getAdjacentMines(row: Int, column: Int) = field.getAdjacentMines(row, column)
 
     fun setRevealed(row: Int, column: Int, revealed: Boolean) {
         val whichField = field.columns * row + column
