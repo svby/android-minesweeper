@@ -3,21 +3,26 @@ package at.spengergasse.minesweeper.game
 import android.os.Parcel
 import android.os.Parcelable
 import at.spengergasse.minesweeper.boundsCheck
+import java.io.ObjectInputStream
+import java.io.Serializable
 import kotlin.experimental.and
 import kotlin.experimental.inv
 import kotlin.experimental.or
 
 class Field private constructor(
     private val data: ByteArray, mines: Int, val rows: Int, val columns: Int
-) : Parcelable {
+) : Parcelable, Serializable {
 
-    val fields = rows * columns
+    @Transient
+    var fields = rows * columns
+        private set
 
+    @Transient
     var mines = mines
         private set
 
     private constructor(data: ByteArray, rows: Int, columns: Int) : this(data, 0, rows, columns) {
-        recalculateCount()
+        recalculate()
     }
 
     constructor(rows: Int, columns: Int) : this(createEmptyDataArray(rows, columns), 0, rows, columns)
@@ -26,7 +31,8 @@ class Field private constructor(
 
     // region Implementation
 
-    private fun recalculateCount() {
+    private fun recalculate() {
+        fields = rows * columns
         mines = 0
         for (row in 0 until rows) for (column in 0 until columns) {
             if (getUnchecked(data, rows, columns, row, column)) mines++
@@ -69,6 +75,8 @@ class Field private constructor(
     // region Util
 
     companion object Util {
+        private const val serialVersionUID = 1
+
         @JvmStatic
         private fun createEmptyDataArray(rows: Int, columns: Int) =
             ByteArray(Math.ceil(rows * columns / 8.0).toInt()) { 0 }
@@ -124,5 +132,14 @@ class Field private constructor(
     override fun describeContents() = 0
 
     // endregion Parcelable
+
+    // region Serializable
+
+    private fun readObject(stream: ObjectInputStream) {
+        stream.defaultReadObject()
+        recalculate()
+    }
+
+    // endregion Serializable
 
 }

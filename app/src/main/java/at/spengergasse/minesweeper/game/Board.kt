@@ -6,14 +6,16 @@ import at.spengergasse.minesweeper.Cell
 import at.spengergasse.minesweeper.Point
 import at.spengergasse.minesweeper.boundsCheck
 import at.spengergasse.minesweeper.game.moves.Move
+import java.io.ObjectInputStream
+import java.io.Serializable
 import java.util.*
 import kotlin.experimental.and
 import kotlin.experimental.inv
 import kotlin.experimental.or
 
 class Board private constructor(
-    private val field: Field, private val state: ByteArray
-) : Parcelable {
+    private val field: Field, private val state: ByteArray, revealed: Int, flagged: Int
+) : Parcelable, Serializable {
 
     enum class State { Win, Loss, Neutral }
 
@@ -21,15 +23,30 @@ class Board private constructor(
     val columns get() = field.columns
     val mines get() = field.mines
 
-    var revealed = 0
+    @Transient
+    var revealed = revealed
         private set
 
-    var flagged = 0
+    @Transient
+    var flagged = flagged
         private set
 
-    constructor(field: Field) : this(Field(field), createEmptyDataArray(field.rows, field.columns))
+    constructor(field: Field) : this(Field(field), createEmptyDataArray(field.rows, field.columns), 0, 0)
+
+    private constructor(field: Field, state: ByteArray) : this(field, state, 0, 0) {
+        recalculate()
+    }
 
     // region Implementation
+
+    private fun recalculate() {
+        revealed = 0
+        flagged = 0
+        for (row in 0 until rows) for (column in 0 until columns) {
+            if (isRevealedUnchecked(field, state, row, column)) revealed++
+            else if (isFlaggedUnchecked(field, state, row, column)) flagged++
+        }
+    }
 
     fun ensureSafe(row: Int, column: Int) {
         if (field[row, column]) {
@@ -252,5 +269,14 @@ class Board private constructor(
     override fun describeContents() = 0
 
     // endregion Parcelable
+
+    // region Serializable
+
+    private fun readObject(stream: ObjectInputStream) {
+        stream.defaultReadObject()
+        recalculate()
+    }
+
+    // endregion Serializable
 
 }
