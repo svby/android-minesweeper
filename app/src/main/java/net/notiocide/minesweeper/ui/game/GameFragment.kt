@@ -1,4 +1,4 @@
-package at.spengergasse.minesweeper.ui.game
+package net.notiocide.minesweeper.ui.game
 
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -8,16 +8,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
-import at.spengergasse.minesweeper.KEY_BOARD
-import at.spengergasse.minesweeper.R
-import at.spengergasse.minesweeper.game.Board
-import at.spengergasse.minesweeper.game.GameSettings
-import at.spengergasse.minesweeper.game.generators.FieldGenerationArguments
-import at.spengergasse.minesweeper.game.generators.RandomFieldGenerator
-import at.spengergasse.minesweeper.game.moves.FloodRevealMove
-import at.spengergasse.minesweeper.game.moves.ToggleFlagMove
-import at.spengergasse.minesweeper.toPx
 import kotlinx.android.synthetic.main.fragment_game.*
+import net.notiocide.minesweeper.KEY_BOARD
+import net.notiocide.minesweeper.R
+import net.notiocide.minesweeper.game.Board
+import net.notiocide.minesweeper.game.GameSettings
+import net.notiocide.minesweeper.game.generators.FieldGenerationArguments
+import net.notiocide.minesweeper.game.generators.RandomFieldGenerator
+import net.notiocide.minesweeper.game.moves.FloodRevealMove
+import net.notiocide.minesweeper.game.moves.ToggleFlagMove
+import net.notiocide.minesweeper.toPx
 import kotlin.math.roundToInt
 
 class GameFragment : Fragment() {
@@ -26,7 +26,7 @@ class GameFragment : Fragment() {
     private lateinit var settings: GameSettings
 
     private val adapter by lazy { BoardAdapter(board, cellPx) }
-    private val cellPx by lazy { toPx(40.0f, resources) }
+    private val cellPx by lazy { toPx(60.0f, resources) }
 
     private lateinit var board: Board
     private var started = false
@@ -34,6 +34,7 @@ class GameFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        setRetainInstance(true)
         initialSetup(savedInstanceState)
     }
 

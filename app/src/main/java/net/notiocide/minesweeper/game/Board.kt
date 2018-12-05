@@ -1,11 +1,11 @@
-package at.spengergasse.minesweeper.game
+package net.notiocide.minesweeper.game
 
 import android.os.Parcel
 import android.os.Parcelable
-import at.spengergasse.minesweeper.Cell
-import at.spengergasse.minesweeper.Point
-import at.spengergasse.minesweeper.boundsCheck
-import at.spengergasse.minesweeper.game.moves.Move
+import net.notiocide.minesweeper.Cell
+import net.notiocide.minesweeper.Point
+import net.notiocide.minesweeper.boundsCheck
+import net.notiocide.minesweeper.game.moves.Move
 import java.io.ObjectInputStream
 import java.io.Serializable
 import java.util.*

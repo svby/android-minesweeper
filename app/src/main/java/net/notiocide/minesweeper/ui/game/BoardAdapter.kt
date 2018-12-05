@@ -1,12 +1,12 @@
-package at.spengergasse.minesweeper.ui.game
+package net.notiocide.minesweeper.ui.game
 
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
-import at.spengergasse.minesweeper.R
-import at.spengergasse.minesweeper.game.Board
+import net.notiocide.minesweeper.R
+import net.notiocide.minesweeper.game.Board
 import kotlin.math.roundToInt
 
 class BoardAdapter(board: Board, private val size: Float) : BaseAdapter() {

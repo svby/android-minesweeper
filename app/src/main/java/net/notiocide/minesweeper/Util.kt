@@ -1,4 +1,4 @@
-package at.spengergasse.minesweeper
+package net.notiocide.minesweeper
 
 import android.content.res.Resources
 import android.util.TypedValue
