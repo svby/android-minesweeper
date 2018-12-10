@@ -13,7 +13,7 @@ import net.notiocide.minesweeper.R
 class NumberPickerDialogFragment(
     val isTextBased: Boolean,
     private val title: Int,
-    private val range: IntRange = 1..50,
+    private val range: IntRange = 1..99,
     private val initialValue: Int = range.first
 ) :
     DialogFragment() {
@@ -29,7 +29,8 @@ class NumberPickerDialogFragment(
 
         if (isTextBased) {
             @SuppressLint("InflateParams")
-            val view = requireActivity().layoutInflater.inflate(R.layout.fragment_edittext, null, false)
+            val view =
+                requireActivity().layoutInflater.inflate(R.layout.fragment_dialog_numberpicker_edittext, null, false)
             val editText = view.findViewById<EditText>(R.id.edittext_value)
 
             editText.setText(initialValue.toString())
@@ -53,7 +54,8 @@ class NumberPickerDialogFragment(
             }
         } else {
             @SuppressLint("InflateParams")
-            val view = requireActivity().layoutInflater.inflate(R.layout.fragment_spinner, null, false)
+            val view =
+                requireActivity().layoutInflater.inflate(R.layout.fragment_dialog_numberpicker_spinner, null, false)
             val spinner = view.findViewById<NumberPicker>(R.id.spinner_value)
 
             view.findViewById<TextView>(R.id.spinner_title).setText(title)

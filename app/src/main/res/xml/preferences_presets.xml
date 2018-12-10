@@ -1,4 +1,5 @@
-<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:persistent="false">
     <PreferenceCategory app:title="Presets">
         <Preference
             app:key="preset_easy"
