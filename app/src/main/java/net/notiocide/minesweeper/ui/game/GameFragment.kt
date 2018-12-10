@@ -3,6 +3,7 @@ package net.notiocide.minesweeper.ui.game
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
+import android.util.TypedValue
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -17,7 +18,6 @@ import net.notiocide.minesweeper.game.generators.FieldGenerationArguments
 import net.notiocide.minesweeper.game.generators.RandomFieldGenerator
 import net.notiocide.minesweeper.game.moves.FloodRevealMove
 import net.notiocide.minesweeper.game.moves.ToggleFlagMove
-import net.notiocide.minesweeper.toPx
 import kotlin.math.roundToInt
 
 class GameFragment : Fragment() {
@@ -26,7 +26,13 @@ class GameFragment : Fragment() {
     private lateinit var settings: GameSettings
 
     private val adapter by lazy { BoardAdapter(board, cellPx) }
-    private val cellPx by lazy { toPx(60.0f, resources) }
+    private val cellPx by lazy {
+        TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            50.0f,
+            resources.displayMetrics
+        )
+    }
 
     private lateinit var board: Board
     private var started = false

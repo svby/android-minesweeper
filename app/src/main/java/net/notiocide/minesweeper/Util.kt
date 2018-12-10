@@ -1,12 +1,7 @@
 package net.notiocide.minesweeper
 
-import android.content.res.Resources
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import androidx.lifecycle.MutableLiveData
-import java.math.BigInteger
 
 const val KEY_BOARD = "minesweeper:state:board"
 
@@ -45,23 +40,6 @@ val ViewGroup.childrenRecursive: Sequence<View>
             if (it is ViewGroup) yieldAll(it.childrenRecursive)
         }
     }
-
-val INT_MAX = BigInteger.valueOf(Int.MAX_VALUE.toLong())
-
-fun EditText.getInt(limit: BigInteger = INT_MAX): Int {
-    return text.toString().toBigIntegerOrNull()?.min(limit)?.toInt() ?: 0
-}
-
-fun EditText.getBigInteger(): BigInteger {
-    return text.toString().toBigIntegerOrNull() ?: BigInteger.ZERO
-}
-
-fun <T> MutableLiveData<T>.notify() {
-    value = value
-}
-
-fun toPx(value: Float, resources: Resources) =
-    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics)
 
 fun boundsCheck(rows: Int, columns: Int, row: Int, column: Int) {
     if (row !in 0 until rows) throw ArrayIndexOutOfBoundsException(row)

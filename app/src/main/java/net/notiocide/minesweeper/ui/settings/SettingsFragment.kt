@@ -28,7 +28,7 @@ class SettingsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        group_difficulty.setOnCheckedChangeListener { group, checkedId ->
+        group_difficulty.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radio_custom -> layout_settings.childrenRecursive.forEach { it.isEnabled = true }
                 else -> {
