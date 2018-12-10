@@ -15,7 +15,6 @@
     <string name="difficulty_easy">Easy</string>
     <string name="difficulty_medium">Medium</string>
     <string name="difficulty_hard">Hard</string>
-    <string name="difficulty_custom">Custom</string>
 
     <string name="config">Game settings</string>
     <string name="config_mines">Mines</string>
