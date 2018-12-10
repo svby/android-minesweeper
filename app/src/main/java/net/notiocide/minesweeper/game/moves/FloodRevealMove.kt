@@ -1,7 +1,7 @@
-package at.spengergasse.minesweeper.game.moves
+package net.notiocide.minesweeper.game.moves
 
-import at.spengergasse.minesweeper.Point
-import at.spengergasse.minesweeper.game.Board
+import net.notiocide.minesweeper.Point
+import net.notiocide.minesweeper.game.Board
 import java.util.*
 import kotlin.collections.HashSet
 

@@ -1,6 +1,6 @@
-package at.spengergasse.minesweeper.game.moves
+package net.notiocide.minesweeper.game.moves
 
-import at.spengergasse.minesweeper.game.Board
+import net.notiocide.minesweeper.game.Board
 
 interface Move {
 
