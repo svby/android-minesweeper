@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="net.notiocide.minesweeper.ui.settings.SettingsFragment"
+        android:name="net.notiocide.minesweeper.ui.settings.Settings2Fragment"
         android:label="@string/action_settings"
         tools:layout="@layout/fragment_settings" />
 </navigation>

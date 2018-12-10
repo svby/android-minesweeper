@@ -1,7 +1,7 @@
 package net.notiocide.minesweeper.ui.settings
 
+import android.content.Context
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -12,15 +12,10 @@ import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_settings.*
 import net.notiocide.minesweeper.*
 import net.notiocide.minesweeper.game.GameSettings
-import java.math.BigInteger
 
 class SettingsFragment : Fragment() {
 
-    companion object {
-        private val MAX = BigInteger.valueOf(MAX_SIZE.toLong())
-    }
-
-    private val prefs by lazy { PreferenceManager.getDefaultSharedPreferences(requireContext()) }
+    private val prefs by lazy { requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         inflater.inflate(R.layout.fragment_settings, container, false)
@@ -69,10 +64,10 @@ class SettingsFragment : Fragment() {
                 if (s.toString() == "0") s.replace(0, 1, "")
                 else if (s.isNotEmpty()) {
                     val bigInteger = s.toString().toBigInteger()
-                    if (bigInteger > MAX) {
+                    if (bigInteger > MAX_SIZE_BIGINT) {
                         for (length in s.length downTo 1) {
                             val cut = s.toString().substring(0, length)
-                            if (cut.toBigInteger() <= MAX) {
+                            if (cut.toBigInteger() <= MAX_SIZE_BIGINT) {
                                 s.replace(0, s.length, cut)
                                 break
                             }
