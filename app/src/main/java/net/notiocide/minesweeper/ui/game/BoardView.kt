@@ -4,12 +4,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import net.notiocide.minesweeper.game.Board
 import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.max
 import kotlin.math.min
 
 class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(context, attrs) {
@@ -42,7 +43,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
     private var cellSize = 0f
 
     private fun recalculate() {
-        dividerSize = 5 * dp
+        dividerSize = 2 * dp
         doubleDividerSize = 2 * dividerSize
 
         cellSize = 50 * dp
@@ -69,8 +70,6 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
         }
     }
 
-    private val rect = RectF(0f, 0f, 2000000f, 2000000f)
-
     init {
         recalculate()
     }
@@ -89,8 +88,14 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
     override fun onDraw(canvas: Canvas) {
         board?.let { board ->
             with(canvas) {
-                for (row in 0 until min(board.rows.toFloat(), ceil(height / totalCellSize)).toInt()) {
-                    for (column in 0 until min(board.columns.toFloat(), ceil(width / totalCellSize)).toInt()) {
+                val startRow = max(0f, floor(viewportY / totalCellSize)).toInt()
+                val endRow = min(board.rows.toFloat(), ceil(height / totalCellSize)).toInt()
+
+                val startColumn = max(0f, floor(viewportX / totalCellSize)).toInt()
+                val endColumn = min(board.columns.toFloat(), ceil(width / totalCellSize)).toInt()
+
+                for (row in startRow until endRow) {
+                    for (column in startColumn until endColumn) {
                         val offsetX = column * totalCellSize
                         val offsetY = row * totalCellSize
 
