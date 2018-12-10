@@ -15,10 +15,12 @@ class PresetSettingsFragment : PreferenceFragmentCompat() {
         preferenceManager.sharedPreferencesName = PREFS_NAME
 
         preferenceScreen.let {
-            it["preset_easy"].summary = getString(R.string.preset_summary).format(EASY_ROWS, EASY_COLUMNS, EASY_MINES)
+            it["preset_easy"].summary =
+                    getString(R.string.summary_set_preset_individual).format(EASY_ROWS, EASY_COLUMNS, EASY_MINES)
             it["preset_medium"].summary =
-                    getString(R.string.preset_summary).format(MEDIUM_ROWS, MEDIUM_COLUMNS, MEDIUM_MINES)
-            it["preset_hard"].summary = getString(R.string.preset_summary).format(HARD_ROWS, HARD_COLUMNS, HARD_MINES)
+                    getString(R.string.summary_set_preset_individual).format(MEDIUM_ROWS, MEDIUM_COLUMNS, MEDIUM_MINES)
+            it["preset_hard"].summary =
+                    getString(R.string.summary_set_preset_individual).format(HARD_ROWS, HARD_COLUMNS, HARD_MINES)
         }
     }
 

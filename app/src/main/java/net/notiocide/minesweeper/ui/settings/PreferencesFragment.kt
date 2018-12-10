@@ -5,11 +5,12 @@ import androidx.core.content.edit
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
 import androidx.preference.get
 import net.notiocide.minesweeper.*
 import kotlin.math.min
 
-class Settings2Fragment : PreferenceFragmentCompat() {
+class PreferencesFragment : PreferenceFragmentCompat() {
 
     private fun updateValues() {
         preferenceManager.sharedPreferences.let { prefs ->
@@ -17,6 +18,7 @@ class Settings2Fragment : PreferenceFragmentCompat() {
                 it["width"].summary = prefs.getInt(KEY_COLUMNS, 1).toString()
                 it["height"].summary = prefs.getInt(KEY_ROWS, 1).toString()
                 it["mines"].summary = prefs.getInt(KEY_MINES, 1).toString()
+                (it["safe"] as SwitchPreferenceCompat).isChecked = prefs.getBoolean(KEY_SAFE, true)
             }
         }
     }
@@ -29,6 +31,14 @@ class Settings2Fragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences_game, rootKey)
         preferenceManager.sharedPreferencesName = PREFS_NAME
+
+        preferenceScreen["safe"].setOnPreferenceChangeListener { _, value ->
+            preferenceManager.sharedPreferences.edit {
+                putBoolean(KEY_SAFE, value as Boolean)
+            }
+
+            true
+        }
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {

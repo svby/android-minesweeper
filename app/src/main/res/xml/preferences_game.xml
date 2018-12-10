@@ -1,29 +1,27 @@
-<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory app:title="Game settings">
+<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:persistent="false">
+    <PreferenceCategory app:title="@string/config">
         <SwitchPreferenceCompat
             app:key="safe"
-            app:summary="Prevents the player from uncovering a bomb immediately"
-            app:title="Safe first move" />
+            app:summary="@string/summary_safe_first"
+            app:title="@string/config_safe_first" />
 
         <PreferenceCategory app:title="Board settings">
             <Preference
                 app:key="width"
-                app:summary="1"
-                app:title="Width" />
+                app:title="@string/config_columns" />
 
             <Preference
                 app:key="height"
-                app:summary="1"
-                app:title="Height" />
+                app:title="@string/config_rows" />
 
             <Preference
                 app:key="mines"
-                app:summary="1"
-                app:title="Mines" />
+                app:title="@string/config_mines" />
 
             <Preference
                 app:key="set_preset"
-                app:summary="Choose game settings from a set of predefined values"
+                app:summary="@string/summary_set_preset"
                 app:title="@string/action_set_preset" />
 
         </PreferenceCategory>
