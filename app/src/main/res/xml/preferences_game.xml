@@ -24,7 +24,7 @@
             <Preference
                 app:key="set_preset"
                 app:summary="Choose game settings from a set of predefined values"
-                app:title="Set difficulty preset" />
+                app:title="@string/action_set_preset" />
 
         </PreferenceCategory>
 
