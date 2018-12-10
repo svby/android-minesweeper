@@ -8,12 +8,13 @@ import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import net.notiocide.minesweeper.MAX_SIZE
 import net.notiocide.minesweeper.R
 
 class NumberPickerDialogFragment(
     val isTextBased: Boolean,
     private val title: Int,
-    private val range: IntRange = 1..99,
+    private val range: IntRange = 1..MAX_SIZE,
     private val initialValue: Int = range.first
 ) :
     DialogFragment() {
