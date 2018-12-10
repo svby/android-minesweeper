@@ -1,4 +1,4 @@
-package at.spengergasse.minesweeper
+package net.notiocide.minesweeper
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

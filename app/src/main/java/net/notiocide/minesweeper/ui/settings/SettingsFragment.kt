@@ -1,4 +1,4 @@
-package at.spengergasse.minesweeper.ui.settings
+package net.notiocide.minesweeper.ui.settings
 
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -9,9 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
-import at.spengergasse.minesweeper.*
-import at.spengergasse.minesweeper.game.GameSettings
 import kotlinx.android.synthetic.main.fragment_settings.*
+import net.notiocide.minesweeper.*
+import net.notiocide.minesweeper.game.GameSettings
 import java.math.BigInteger
 
 class SettingsFragment : Fragment() {
@@ -28,7 +28,7 @@ class SettingsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        group_difficulty.setOnCheckedChangeListener { group, checkedId ->
+        group_difficulty.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radio_custom -> layout_settings.childrenRecursive.forEach { it.isEnabled = true }
                 else -> {

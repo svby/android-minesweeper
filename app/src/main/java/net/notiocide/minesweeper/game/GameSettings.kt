@@ -1,8 +1,8 @@
-package at.spengergasse.minesweeper.game
+package net.notiocide.minesweeper.game
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import at.spengergasse.minesweeper.*
+import net.notiocide.minesweeper.*
 
 data class GameSettings(
     val rows: Int,
