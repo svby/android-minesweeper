@@ -2,6 +2,9 @@ package net.notiocide.minesweeper
 
 import android.view.View
 import android.view.ViewGroup
+import java.math.BigInteger
+
+const val PREFS_NAME = "net.notiocide.minesweeper:preferences"
 
 const val KEY_BOARD = "minesweeper:state:board"
 
@@ -28,6 +31,7 @@ const val HARD_COLUMNS = 16
 const val HARD_MINES = 99
 
 const val MAX_SIZE = 99
+val MAX_SIZE_BIGINT = BigInteger.valueOf(MAX_SIZE.toLong())
 
 typealias Point = Pair<Int, Int>
 
