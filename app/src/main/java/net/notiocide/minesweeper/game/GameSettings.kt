@@ -21,9 +21,7 @@ data class GameSettings(
 
             if (rows == -1 || columns == -1 || mines == -1) {
                 prefs.edit {
-                    putInt(KEY_ROWS, EASY_ROWS)
-                    putInt(KEY_COLUMNS, EASY_COLUMNS)
-                    putInt(KEY_MINES, EASY_MINES)
+                    putPreset(Preset.EASY)
                 }
             }
         }
@@ -33,9 +31,9 @@ data class GameSettings(
             ensure(prefs)
 
             return GameSettings(
-                prefs.getInt(KEY_ROWS, EASY_ROWS),
-                prefs.getInt(KEY_COLUMNS, EASY_COLUMNS),
-                prefs.getInt(KEY_MINES, EASY_MINES),
+                prefs.getInt(KEY_ROWS, Preset.EASY.rows),
+                prefs.getInt(KEY_COLUMNS, Preset.EASY.columns),
+                prefs.getInt(KEY_MINES, Preset.EASY.mines),
                 prefs.getBoolean(KEY_SAFE, true)
             )
         }
