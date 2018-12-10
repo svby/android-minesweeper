@@ -63,6 +63,8 @@ class GameFragment : Fragment() {
 
         updateTurn()
 
+        board_view.board = board
+
         grid.setOnItemClickListener { _, _, position, _ ->
             val row = position / board.columns
             val column = position % board.columns
