@@ -2,7 +2,6 @@ package net.notiocide.minesweeper.game
 
 import android.os.Parcel
 import android.os.Parcelable
-import net.notiocide.minesweeper.Cell
 import net.notiocide.minesweeper.Point
 import net.notiocide.minesweeper.boundsCheck
 import net.notiocide.minesweeper.game.moves.Move
