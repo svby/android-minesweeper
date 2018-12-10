@@ -1,6 +1,4 @@
-package net.notiocide.minesweeper
-
-import net.notiocide.minesweeper.game.Board
+package net.notiocide.minesweeper.game
 
 data class Cell(
     val row: Int,
