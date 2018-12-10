@@ -15,16 +15,15 @@ data class GameSettings(
 
         @JvmStatic
         fun ensure(prefs: SharedPreferences) {
-            val preset = prefs.getInt(KEY_PRESET, -1)
-            if (preset != -1) return
-
             val rows = prefs.getInt(KEY_ROWS, -1)
             val columns = prefs.getInt(KEY_COLUMNS, -1)
             val mines = prefs.getInt(KEY_MINES, -1)
 
             if (rows == -1 || columns == -1 || mines == -1) {
                 prefs.edit {
-                    putInt(KEY_PRESET, PRESET_EASY)
+                    putInt(KEY_ROWS, EASY_ROWS)
+                    putInt(KEY_COLUMNS, EASY_COLUMNS)
+                    putInt(KEY_MINES, EASY_MINES)
                 }
             }
         }
@@ -33,18 +32,12 @@ data class GameSettings(
         fun load(prefs: SharedPreferences): GameSettings {
             ensure(prefs)
 
-            val safe = prefs.getBoolean(KEY_SAFE, true)
-            return when (prefs.getInt(KEY_PRESET, -1)) {
-                PRESET_EASY -> GameSettings(EASY_ROWS, EASY_COLUMNS, EASY_MINES, safe)
-                PRESET_MEDIUM -> GameSettings(MEDIUM_ROWS, MEDIUM_COLUMNS, MEDIUM_MINES, safe)
-                PRESET_HARD -> GameSettings(HARD_ROWS, HARD_COLUMNS, HARD_MINES, safe)
-                else -> GameSettings(
-                    prefs.getInt(KEY_ROWS, 1),
-                    prefs.getInt(KEY_COLUMNS, 1),
-                    prefs.getInt(KEY_MINES, 1),
-                    safe
-                )
-            }
+            return GameSettings(
+                prefs.getInt(KEY_ROWS, EASY_ROWS),
+                prefs.getInt(KEY_COLUMNS, EASY_COLUMNS),
+                prefs.getInt(KEY_MINES, EASY_MINES),
+                prefs.getBoolean(KEY_SAFE, true)
+            )
         }
 
     }

@@ -3,23 +3,29 @@
 
     <string name="dialog_win">You won!</string>
     <string name="dialog_lose">You lost. Try again?</string>
+    <string name="dialog_row_spinner">Select board height</string>
+    <string name="dialog_column_spinner">Select board width</string>
+    <string name="dialog_mine_spinner">Select mine count</string>
+    <string name="dialog_spinner_range">Valid values: %s to %s</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_restart">Restart</string>
     <string name="action_new_game">New game</string>
 
-    <string name="category_difficulty">Difficulty</string>
     <string name="difficulty_easy">Easy</string>
     <string name="difficulty_medium">Medium</string>
     <string name="difficulty_hard">Hard</string>
-    <string name="difficulty_custom">Custom</string>
 
-    <string name="category_config">Game settings</string>
+    <string name="config">Game settings</string>
     <string name="config_mines">Mines</string>
     <string name="config_rows">Height</string>
     <string name="config_columns">Width</string>
     <string name="config_safe_first">Safe first move</string>
     <string name="action_save_config">Save</string>
+    <string name="action_set_preset">Set difficulty preset</string>
+    <string name="summary_safe_first">Prevents the player from uncovering a bomb immediately</string>
+    <string name="summary_set_preset_individual">%s by %s, %s mines</string>
+    <string name="summary_set_preset">Choose game settings from a set of predefined values</string>
 
     <string name="action_undo">Undo</string>
     <string name="action_undo_last">Undo last move</string>

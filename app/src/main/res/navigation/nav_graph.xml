@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/gameFragment">
 
@@ -12,15 +11,18 @@
         <action
             android:id="@+id/action_gameFragment_to_settingsFragment"
             app:destination="@id/settingsFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"
             app:popUpTo="@id/gameFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="net.notiocide.minesweeper.ui.settings.SettingsFragment"
-        android:label="@string/action_settings"
-        tools:layout="@layout/fragment_settings" />
+        android:name="net.notiocide.minesweeper.ui.settings.PreferencesFragment"
+        android:label="@string/action_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_presetSettingsFragment"
+            app:destination="@id/presetSettingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/presetSettingsFragment"
+        android:name="net.notiocide.minesweeper.ui.settings.PresetSettingsFragment"
+        android:label="@string/action_set_preset" />
 </navigation>

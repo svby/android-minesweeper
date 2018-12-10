@@ -1,7 +1,7 @@
 package net.notiocide.minesweeper.ui.game
 
+import android.content.Context
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import android.util.TypedValue
 import android.view.*
@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_game.*
 import net.notiocide.minesweeper.KEY_BOARD
+import net.notiocide.minesweeper.PREFS_NAME
 import net.notiocide.minesweeper.R
 import net.notiocide.minesweeper.game.Board
 import net.notiocide.minesweeper.game.GameSettings
@@ -21,6 +22,8 @@ import net.notiocide.minesweeper.game.moves.ToggleFlagMove
 import kotlin.math.roundToInt
 
 class GameFragment : Fragment() {
+
+    private val prefs by lazy { requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE) }
 
     private val generator = RandomFieldGenerator()
     private lateinit var settings: GameSettings
@@ -152,7 +155,7 @@ class GameFragment : Fragment() {
         val stored = bundle?.getParcelable<Board>(KEY_BOARD)
         Log.v("Minesweeper", stored.toString())
 
-        settings = GameSettings.load(PreferenceManager.getDefaultSharedPreferences(activity))
+        settings = GameSettings.load(prefs)
         val field = generator.generate(settings.rows, settings.columns, FieldGenerationArguments(settings.mines))
 
         started = false
