@@ -12,15 +12,19 @@
         <action
             android:id="@+id/action_gameFragment_to_settingsFragment"
             app:destination="@id/settingsFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"
             app:popUpTo="@id/gameFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="net.notiocide.minesweeper.ui.settings.Settings2Fragment"
         android:label="@string/action_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_presetSettingsFragment"
+            app:destination="@id/presetSettingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/presetSettingsFragment"
+        android:name="net.notiocide.minesweeper.ui.settings.PresetSettingsFragment"
+        android:label="@string/action_set_preset" />
 </navigation>

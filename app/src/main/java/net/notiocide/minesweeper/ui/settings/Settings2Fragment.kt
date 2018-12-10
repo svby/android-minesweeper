@@ -2,6 +2,7 @@ package net.notiocide.minesweeper.ui.settings
 
 import android.os.Bundle
 import androidx.core.content.edit
+import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.get
@@ -20,10 +21,14 @@ class Settings2Fragment : PreferenceFragmentCompat() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        updateValues()
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences_game, rootKey)
         preferenceManager.sharedPreferencesName = PREFS_NAME
-        updateValues()
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
@@ -74,6 +79,10 @@ class Settings2Fragment : PreferenceFragmentCompat() {
                         updateValues()
                     }
                     dialog.show(fragmentManager, "spinner")
+                }
+                "set_preset" -> {
+                    NavHostFragment.findNavController(this)
+                        .navigate(R.id.action_settingsFragment_to_presetSettingsFragment)
                 }
             }
         }
