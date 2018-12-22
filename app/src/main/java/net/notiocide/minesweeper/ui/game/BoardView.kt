@@ -76,6 +76,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
 
     val textPaint = Paint().apply {
         color = Color.BLACK
+        typeface = Typeface.MONOSPACE
     }
 
     val cellPaint = Paint(basePaint).apply { color = Color.WHITE }
@@ -100,7 +101,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
         halfDividerSize = dividerSize / 2
 
         dividerPaint.strokeWidth = dividerSize
-        textPaint.textSize = 20 * sp
+        textPaint.textSize = 22 * sp
 
         cellSize = 50 * dp
         totalCellSize = doubleDividerSize + cellSize
@@ -350,9 +351,10 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
 
                             text?.let {
                                 textPaint.getTextBounds(it, 0, it.length, textBounds)
+                                val width = textPaint.measureText(it, 0, it.length)
                                 drawText(
                                     it,
-                                    rectX + (rectW - textBounds.width()) / 2,
+                                    rectX + (rectW - width) / 2,
                                     rectY + (rectH + textBounds.height()) / 2,
                                     textPaint
                                 )
