@@ -21,9 +21,11 @@
     <string name="config_rows">Height</string>
     <string name="config_columns">Width</string>
     <string name="config_safe_first">Safe first move</string>
+    <string name="config_doubletap">Enable double-tap</string>
     <string name="action_save_config">Save</string>
     <string name="action_set_preset">Set difficulty preset</string>
-    <string name="summary_safe_first">Prevents the player from uncovering a bomb immediately</string>
+    <string name="summary_safe_first">Prevents the player from uncovering a mine immediately</string>
+    <string name="summary_doubletap">Double-tap to open all 8 adjacent cells</string>
     <string name="summary_set_preset_individual">%s by %s, %s mines</string>
     <string name="summary_set_preset">Choose game settings from a set of predefined values</string>
 

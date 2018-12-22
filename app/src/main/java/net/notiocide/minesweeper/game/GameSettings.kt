@@ -8,7 +8,8 @@ data class GameSettings(
     val rows: Int,
     val columns: Int,
     val mines: Int,
-    val safe: Boolean
+    val safe: Boolean,
+    val doubleTapEnabled: Boolean
 ) {
 
     companion object {
@@ -34,7 +35,8 @@ data class GameSettings(
                 prefs.getInt(KEY_ROWS, Preset.EASY.rows),
                 prefs.getInt(KEY_COLUMNS, Preset.EASY.columns),
                 prefs.getInt(KEY_MINES, Preset.EASY.mines),
-                prefs.getBoolean(KEY_SAFE, true)
+                prefs.getBoolean(KEY_SAFE, true),
+                prefs.getBoolean(KEY_DOUBLETAP, true)
             )
         }
 
