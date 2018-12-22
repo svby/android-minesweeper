@@ -2,9 +2,7 @@ package net.notiocide.minesweeper.ui.game
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
@@ -12,7 +10,9 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.widget.OverScroller
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.GestureDetectorCompat
+import net.notiocide.minesweeper.R
 import net.notiocide.minesweeper.game.Board
 import net.notiocide.minesweeper.roundUp
 import kotlin.math.ceil
@@ -26,8 +26,6 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
     constructor(context: Context, board: Board) : this(context, null, board)
     constructor(context: Context) : this(context, null)
 
-    private val paint = Paint()
-
     private var _board = board
 
     var board
@@ -38,6 +36,8 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
         }
 
     private val dp by lazy { TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.0f, resources.displayMetrics) }
+    private val sp by lazy { TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 1.0f, resources.displayMetrics) }
+    private val iconSize = 0.7f
 
     private var boardWidth = 0f
     private var boardHeight = 0f
@@ -53,8 +53,43 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
     private var totalCellSize = 0f
     private var cellSize = 0f
 
+    // TODO: This deprecation should be ignored (higher API level)
+    @Suppress("DEPRECATION")
+    private val flag = resources.getDrawable(R.drawable.ic_flag)
+    @Suppress("DEPRECATION")
+    private val mine = resources.getDrawable(R.drawable.ic_mine)
+
+    private var flagBitmap: Bitmap
+    private var mineBitmap: Bitmap
+
+    val basePaint = Paint().apply {
+        style = Paint.Style.FILL
+        flags = Paint.ANTI_ALIAS_FLAG
+    }
+
+    val textPaint = Paint().apply {
+        textSize = 10 * sp
+        color = Color.BLACK
+    }
+
+    val cellPaint = Paint(basePaint).apply { color = Color.WHITE }
+    val uncoveredPaint = Paint(basePaint).apply { color = Color.WHITE }
+    val coveredPaint = Paint(basePaint).apply { color = Color.parseColor("#dfe4ea") }
+    val minePaint = Paint(basePaint).apply { color = Color.parseColor("#ff4757") }
+    val flagPaint = Paint(basePaint).apply { color = Color.parseColor("#f8a5c2") }
+
+    val dividerPaint = Paint().apply {
+        flags = Paint.ANTI_ALIAS_FLAG
+        style = Paint.Style.STROKE
+        strokeWidth = dividerSize
+        color = Color.LTGRAY
+    }
+
+    private val detector = GestureDetectorCompat(context, GestureListener()).apply { setIsLongpressEnabled(true) }
+    private val scroller = OverScroller(context)
+
     private fun recalculate() {
-        dividerSize = 5 * dp
+        dividerSize = 2 * dp
         doubleDividerSize = 2 * dividerSize
         halfDividerSize = dividerSize / 2
 
@@ -81,31 +116,12 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
         }
     }
 
-    private val detector = GestureDetectorCompat(context, GestureListener())
-    private val scroller = OverScroller(context)
-
     init {
         recalculate()
-        detector.setIsLongpressEnabled(true)
-    }
 
-    val cellPaint = Paint().apply {
-        style = Paint.Style.FILL
-        color = Color.RED
-    }
-
-    val dividerPaint = Paint().apply {
-        flags = Paint.ANTI_ALIAS_FLAG
-        style = Paint.Style.STROKE
-        strokeWidth = dividerSize
-        color = Color.BLACK
-    }
-
-    val debugPaint = Paint().apply {
-        flags = Paint.ANTI_ALIAS_FLAG
-        style = Paint.Style.FILL
-        color = Color.BLACK
-        textSize = 50.0f
+        val size = (cellSize * iconSize).toInt()
+        flagBitmap = flag.toBitmap(size, size, null)
+        mineBitmap = mine.toBitmap(size, size, null)
     }
 
     private fun scrollTo(x: Float, y: Float) {
@@ -123,17 +139,11 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
 
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             scrollTo(viewportX + distanceX, viewportY + distanceY)
-//            Log.i(
-//                "Minesweeper",
-//                "Viewport: $viewportMaxX ($viewportX, $viewportY) ($distanceX, $distanceY) ($boardWidth, $boardHeight)"
-//            )
             invalidate()
             return true
         }
 
         override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-            Log.i("Minesweeper", "Viewport fling detected")
-
             scroller.forceFinished(true)
             scroller.fling(
                 viewportX.toInt(), viewportY.toInt(),
@@ -166,6 +176,8 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
         return true
     }
 
+    val textBounds = Rect()
+
     override fun onDraw(canvas: Canvas) {
         board?.let { board ->
             with(canvas) {
@@ -186,6 +198,8 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
 
                 for (row in startRow until endRow) {
                     for (column in startColumn until endColumn) {
+                        val cell = board[row, column]
+
                         val offsetX = column * (dividerSize + cellSize) - viewportX
                         val offsetY = row * (dividerSize + cellSize) - viewportY
 
@@ -204,8 +218,45 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
                             val rectW = cellSize
                             val rectH = cellSize
 
-                            drawRect(rectX, rectY, rectX + rectW, rectY + rectH, cellPaint)
-                            drawText("$row:$column", rectX + 10, rectY + 50, debugPaint)
+                            var paint = cellPaint
+                            var bitmap: Bitmap? = null
+                            var text: String? = null
+                            when {
+                                cell.isRevealed -> {
+                                    if (cell.isMine) {
+                                        paint = minePaint
+                                        bitmap = mineBitmap
+                                    } else {
+                                        paint = uncoveredPaint
+                                        text = cell.adjacentMines.toString()
+                                    }
+                                }
+                                cell.isFlagged -> {
+                                    paint = flagPaint
+                                    bitmap = flagBitmap
+                                }
+                            }
+
+                            drawRect(rectX, rectY, rectX + rectW, rectY + rectH, paint)
+
+                            bitmap?.let {
+                                drawBitmap(
+                                    it,
+                                    rectX + (rectW - bitmap.width) / 2,
+                                    rectY + (rectH - bitmap.height) / 2,
+                                    null
+                                )
+                            }
+
+                            text?.let {
+                                textPaint.getTextBounds(it, 0, it.length, textBounds)
+                                drawText(
+                                    it,
+                                    rectX + (rectW - textBounds.width()) / 2,
+                                    rectY + (rectH - textBounds.height()) / 2,
+                                    textPaint
+                                )
+                            }
                         }
                     }
                 }
