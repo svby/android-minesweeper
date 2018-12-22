@@ -12,9 +12,11 @@ import android.view.View
 import android.widget.OverScroller
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.GestureDetectorCompat
+import net.notiocide.minesweeper.Point
 import net.notiocide.minesweeper.R
 import net.notiocide.minesweeper.game.Board
 import net.notiocide.minesweeper.game.GameSettings
+import net.notiocide.minesweeper.game.moves.AdjacentRevealMove
 import net.notiocide.minesweeper.game.moves.FloodRevealMove
 import net.notiocide.minesweeper.game.moves.ToggleFlagMove
 import net.notiocide.minesweeper.roundUp
@@ -136,25 +138,33 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
         viewportY = max(0f, min(viewportMaxY, y))
     }
 
-    private inner class GestureListener : GestureDetector.OnGestureListener {
+    private inner class GestureListener : GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
 
         override fun onShowPress(e: MotionEvent) = Unit
-
+        override fun onDoubleTapEvent(e: MotionEvent) = true
+        override fun onSingleTapUp(e: MotionEvent) = true
         override fun onDown(e: MotionEvent) = true
 
-        override fun onSingleTapUp(e: MotionEvent): Boolean {
+        private fun locate(e: MotionEvent): Point {
+            val totalX = viewportX + e.x
+            val totalY = viewportY + e.y
+
+            val effectiveX = max(0f, min(totalX - halfDividerSize, boardWidth - halfDividerSize))
+            val effectiveY = max(0f, min(totalY - halfDividerSize, boardHeight - halfDividerSize))
+
+            val column = (effectiveX / (dividerSize + cellSize)).toInt()
+            val row = (effectiveY / (dividerSize + cellSize)).toInt()
+
+            return Point(row, column)
+        }
+
+        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
             board?.let { board ->
                 if (board.state != Board.State.Neutral) return true
-                val totalX = viewportX + e.x
-                val totalY = viewportY + e.y
 
-                val effectiveX = max(0f, min(totalX - halfDividerSize, boardWidth - halfDividerSize))
-                val effectiveY = max(0f, min(totalY - halfDividerSize, boardHeight - halfDividerSize))
+                val (row, column) = locate(e)
 
-                val column = (effectiveX / (dividerSize + cellSize)).toInt()
-                val row = (effectiveY / (dividerSize + cellSize)).toInt()
                 if (board.isFlagged(row, column) || board.isRevealed(row, column)) return true
-
                 if (!board.started && settings?.safe == true) board.ensureSafe(row, column)
 
                 board.push(FloodRevealMove(row, column))
@@ -168,20 +178,28 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
         override fun onLongPress(e: MotionEvent) {
             board?.let { board ->
                 if (board.state != Board.State.Neutral) return
-                val totalX = viewportX + e.x
-                val totalY = viewportY + e.y
 
-                val effectiveX = max(0f, min(totalX - halfDividerSize, boardWidth - halfDividerSize))
-                val effectiveY = max(0f, min(totalY - halfDividerSize, boardHeight - halfDividerSize))
-
-                val column = (effectiveX / (dividerSize + cellSize)).toInt()
-                val row = (effectiveY / (dividerSize + cellSize)).toInt()
+                val (row, column) = locate(e)
 
                 board.push(ToggleFlagMove(row, column))
                 invalidate()
 
                 moveListener?.onMove(board, board.state)
             }
+        }
+
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            board?.let { board ->
+                if (board.state != Board.State.Neutral) return true
+
+                val (row, column) = locate(e)
+
+                board.push(AdjacentRevealMove(row, column))
+                invalidate()
+
+                moveListener?.onMove(board, board.state)
+            }
+            return true
         }
 
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
