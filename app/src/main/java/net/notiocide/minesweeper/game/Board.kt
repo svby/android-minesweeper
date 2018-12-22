@@ -13,7 +13,7 @@ import kotlin.experimental.inv
 import kotlin.experimental.or
 
 class Board private constructor(
-    private val field: Field, private val state: ByteArray, revealed: Int, flagged: Int
+    private val field: Field, private var data: ByteArray, state: State, revealed: Int, flagged: Int
 ) : Parcelable, Serializable {
 
     enum class State { Win, Loss, Neutral }
@@ -23,6 +23,24 @@ class Board private constructor(
     val mines get() = field.mines
 
     @Transient
+    var started = false
+        private set
+
+    var state = state
+        private set
+
+    fun reset() {
+        restart()
+        started = false
+    }
+
+    fun restart() {
+        data = createEmptyDataArray(field.rows, field.columns)
+        revealed = 0
+        flagged = 0
+    }
+
+    @Transient
     var revealed = revealed
         private set
 
@@ -30,9 +48,9 @@ class Board private constructor(
     var flagged = flagged
         private set
 
-    constructor(field: Field) : this(Field(field), createEmptyDataArray(field.rows, field.columns), 0, 0)
+    constructor(field: Field) : this(Field(field), createEmptyDataArray(field.rows, field.columns), State.Neutral, 0, 0)
 
-    private constructor(field: Field, state: ByteArray) : this(field, state, 0, 0) {
+    private constructor(field: Field, state: ByteArray) : this(field, state, State.Neutral, 0, 0) {
         recalculate()
     }
 
@@ -42,9 +60,12 @@ class Board private constructor(
         revealed = 0
         flagged = 0
         for (row in 0 until rows) for (column in 0 until columns) {
-            if (isRevealedUnchecked(field, state, row, column)) revealed++
-            else if (isFlaggedUnchecked(field, state, row, column)) flagged++
+            if (isRevealedUnchecked(field, data, row, column)) {
+                revealed++
+                if (field[row, column]) state = State.Loss
+            } else if (isFlaggedUnchecked(field, data, row, column)) flagged++
         }
+        if (state == State.Neutral && revealed == field.rows * field.columns - field.mines) state = State.Win
     }
 
     fun ensureSafe(row: Int, column: Int) {
@@ -65,12 +86,12 @@ class Board private constructor(
 
     fun isRevealed(row: Int, column: Int): Boolean {
         boundsCheck(rows, columns, row, column)
-        return isRevealedUnchecked(field, state, row, column)
+        return isRevealedUnchecked(field, data, row, column)
     }
 
     fun isFlagged(row: Int, column: Int): Boolean {
         boundsCheck(rows, columns, row, column)
-        return isFlaggedUnchecked(field, state, row, column)
+        return isFlaggedUnchecked(field, data, row, column)
     }
 
     fun isMine(row: Int, column: Int): Boolean {
@@ -86,10 +107,10 @@ class Board private constructor(
         val whichQuarter = whichField % 4
         val shift = whichQuarter shl 1
 
-        val oldValue = state[whichByte]
+        val oldValue = data[whichByte]
         val newValue = if (revealed) oldValue or (1 shl shift).toByte() else oldValue and (1 shl shift).toByte().inv()
 
-        state[whichByte] = newValue
+        data[whichByte] = newValue
     }
 
     fun setFlagged(row: Int, column: Int, flagged: Boolean) {
@@ -98,7 +119,7 @@ class Board private constructor(
         val whichQuarter = whichField % 4
         val shift = (whichQuarter shl 1) + 1
 
-        val oldValue = state[whichByte]
+        val oldValue = data[whichByte]
         val newValue = if (flagged) oldValue or (1 shl shift).toByte() else oldValue and (1 shl shift).toByte().inv()
 
         if (oldValue != newValue) this.flagged += when (flagged) {
@@ -106,7 +127,7 @@ class Board private constructor(
             false -> -1
         }
 
-        state[whichByte] = newValue
+        data[whichByte] = newValue
     }
 
     operator fun get(row: Int, column: Int): Cell {
@@ -136,21 +157,24 @@ class Board private constructor(
     }
 
     private fun isRedundant(type: Move.Type, point: Point) = when (type) {
-        Move.Type.Reveal -> isRevealedUnchecked(field, state, point.first, point.second)
-        Move.Type.Flag -> isFlaggedUnchecked(field, state, point.first, point.second)
-        Move.Type.RemoveFlag -> !isFlaggedUnchecked(field, state, point.first, point.second)
+        Move.Type.Reveal -> isRevealedUnchecked(field, data, point.first, point.second)
+        Move.Type.Flag -> isFlaggedUnchecked(field, data, point.first, point.second)
+        Move.Type.RemoveFlag -> !isFlaggedUnchecked(field, data, point.first, point.second)
     }
 
-    private val stack = ArrayDeque<List<Pair<Move.Type, Point>>>()
+    private val stack = ArrayDeque<Pair<State, List<Pair<Move.Type, Point>>>>()
 
     private fun applyChanges(changes: List<Pair<Move.Type, Point>>) {
         for ((type, point) in changes) {
             when (type) {
                 Move.Type.Reveal -> {
+                    started = true
                     setRevealed(point.first, point.second, true)
                     revealed++
                 }
-                Move.Type.Flag -> setFlagged(point.first, point.second, true)
+                Move.Type.Flag -> {
+                    setFlagged(point.first, point.second, true)
+                }
                 Move.Type.RemoveFlag -> setFlagged(point.first, point.second, false)
             }
         }
@@ -169,7 +193,9 @@ class Board private constructor(
         }
     }
 
-    fun push(move: Move): Pair<State, List<Point>> {
+    fun push(move: Move): List<Point> {
+        if (state != State.Neutral) return emptyList()
+
         val changeSet = ChangeSet()
         move.execute(this, changeSet)
 
@@ -178,35 +204,32 @@ class Board private constructor(
 
         val affected = reduced.map { it.second }
 
-        val result = when {
+        val oldState = state
+
+        when {
             reduced.any {
                 it.first == Move.Type.Reveal && isMine(
                     it.second.first,
                     it.second.second
                 )
-            } -> Pair(State.Loss, affected)
-            revealed == field.fields - field.mines -> Pair(State.Win, affected)
-            else -> Pair(State.Neutral, affected)
+            } -> state = State.Loss
+            revealed == field.fields - field.mines -> state = State.Win
+            else -> state = State.Neutral
         }
 
-        stack.push(reduced)
+        stack.push(Pair(oldState, reduced))
 
-        return result
+        return affected
     }
 
     fun pop(): Boolean {
         if (stack.isEmpty()) return false
 
-        val top = stack.pop()
+        val (oldState, top) = stack.pop()
+        state = oldState
         revertChanges(top)
 
         return true
-    }
-
-    fun clear() {
-        Arrays.fill(state, 0)
-        revealed = 0
-        flagged = 0
     }
 
     // endregion Implementation
@@ -261,7 +284,7 @@ class Board private constructor(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         with(parcel) {
             writeParcelable(field, 0)
-            writeByteArray(state)
+            writeByteArray(data)
         }
     }
 
