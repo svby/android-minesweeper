@@ -10,4 +10,6 @@ data class Cell(
     val isFlagged get() = board.isFlagged(row, column)
     val isMine get() = board.isMine(row, column)
 
+    val adjacentMines get() = board.getAdjacentMines(row, column)
+
 }
