@@ -45,6 +45,7 @@ class GameFragment : Fragment() {
         updateHeader()
 
         board_view.board = board
+        settings = GameSettings.load(prefs)
         board_view.settings = settings
 
         board_view.moveListener = object : BoardView.OnMoveListener {

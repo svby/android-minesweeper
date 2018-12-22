@@ -19,6 +19,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 it["height"].summary = prefs.getInt(KEY_ROWS, 1).toString()
                 it["mines"].summary = prefs.getInt(KEY_MINES, 1).toString()
                 (it["safe"] as SwitchPreferenceCompat).isChecked = prefs.getBoolean(KEY_SAFE, true)
+                (it["doubletap"] as SwitchPreferenceCompat).isChecked = prefs.getBoolean(KEY_DOUBLETAP, true)
             }
         }
     }
@@ -35,6 +36,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         preferenceScreen["safe"].setOnPreferenceChangeListener { _, value ->
             preferenceManager.sharedPreferences.edit {
                 putBoolean(KEY_SAFE, value as Boolean)
+            }
+
+            true
+        }
+
+        preferenceScreen["doubletap"].setOnPreferenceChangeListener { _, value ->
+            preferenceManager.sharedPreferences.edit {
+                putBoolean(KEY_DOUBLETAP, value as Boolean)
             }
 
             true

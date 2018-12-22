@@ -142,7 +142,6 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
 
         override fun onShowPress(e: MotionEvent) = Unit
         override fun onDoubleTapEvent(e: MotionEvent) = true
-        override fun onSingleTapUp(e: MotionEvent) = true
         override fun onDown(e: MotionEvent) = true
 
         private fun locate(e: MotionEvent): Point {
@@ -159,18 +158,39 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
         }
 
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-            board?.let { board ->
-                if (board.state != Board.State.Neutral) return true
+            if (settings?.doubleTapEnabled == true) {
+                board?.let { board ->
+                    if (board.state != Board.State.Neutral) return true
 
-                val (row, column) = locate(e)
+                    val (row, column) = locate(e)
 
-                if (board.isFlagged(row, column) || board.isRevealed(row, column)) return true
-                if (!board.started && settings?.safe == true) board.ensureSafe(row, column)
+                    if (board.isFlagged(row, column) || board.isRevealed(row, column)) return true
+                    if (!board.started && settings?.safe == true) board.ensureSafe(row, column)
 
-                board.push(FloodRevealMove(row, column))
-                invalidate()
+                    board.push(FloodRevealMove(row, column))
+                    invalidate()
 
-                moveListener?.onMove(board, board.state)
+                    moveListener?.onMove(board, board.state)
+                }
+            }
+            return true
+        }
+
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
+            if (settings?.doubleTapEnabled != true) {
+                board?.let { board ->
+                    if (board.state != Board.State.Neutral) return true
+
+                    val (row, column) = locate(e)
+
+                    if (board.isFlagged(row, column) || board.isRevealed(row, column)) return true
+                    if (!board.started && settings?.safe == true) board.ensureSafe(row, column)
+
+                    board.push(FloodRevealMove(row, column))
+                    invalidate()
+
+                    moveListener?.onMove(board, board.state)
+                }
             }
             return true
         }
@@ -189,15 +209,17 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
         }
 
         override fun onDoubleTap(e: MotionEvent): Boolean {
-            board?.let { board ->
-                if (board.state != Board.State.Neutral) return true
+            if (settings?.doubleTapEnabled == true) {
+                board?.let { board ->
+                    if (board.state != Board.State.Neutral) return true
 
-                val (row, column) = locate(e)
+                    val (row, column) = locate(e)
 
-                board.push(AdjacentRevealMove(row, column))
-                invalidate()
+                    board.push(AdjacentRevealMove(row, column))
+                    invalidate()
 
-                moveListener?.onMove(board, board.state)
+                    moveListener?.onMove(board, board.state)
+                }
             }
             return true
         }

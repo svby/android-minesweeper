@@ -6,6 +6,11 @@
             app:summary="@string/summary_safe_first"
             app:title="@string/config_safe_first" />
 
+        <SwitchPreferenceCompat
+            app:key="doubletap"
+            app:summary="@string/summary_doubletap"
+            app:title="@string/config_doubletap" />
+
         <PreferenceCategory app:title="Board settings">
             <Preference
                 app:key="width"
