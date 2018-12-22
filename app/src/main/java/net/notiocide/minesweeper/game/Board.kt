@@ -13,7 +13,7 @@ import kotlin.experimental.inv
 import kotlin.experimental.or
 
 class Board private constructor(
-    private val field: Field, private var data: ByteArray, state: State, revealed: Int, flagged: Int
+    private val field: Field, private var data: ByteArray, state: State, started: Boolean, revealed: Int, flagged: Int
 ) : Parcelable, Serializable {
 
     enum class State { Win, Loss, Neutral }
@@ -22,8 +22,7 @@ class Board private constructor(
     val columns get() = field.columns
     val mines get() = field.mines
 
-    @Transient
-    var started = false
+    var started = started
         private set
 
     var state = state
@@ -35,6 +34,7 @@ class Board private constructor(
     }
 
     fun restart() {
+        state = State.Neutral
         data = createEmptyDataArray(field.rows, field.columns)
         revealed = 0
         flagged = 0
@@ -48,9 +48,11 @@ class Board private constructor(
     var flagged = flagged
         private set
 
-    constructor(field: Field) : this(Field(field), createEmptyDataArray(field.rows, field.columns), State.Neutral, 0, 0)
+    constructor(field: Field)
+            : this(Field(field), createEmptyDataArray(field.rows, field.columns), State.Neutral, false, 0, 0)
 
-    private constructor(field: Field, state: ByteArray) : this(field, state, State.Neutral, 0, 0) {
+    private constructor(field: Field, state: ByteArray, started: Boolean)
+            : this(field, state, State.Neutral, started, 0, 0) {
         recalculate()
     }
 
@@ -269,8 +271,9 @@ class Board private constructor(
                 val field = parcel.readParcelable<Field>(Board::class.java.classLoader)
                     ?: throw IllegalStateException("Field could not be deparceled")
                 val state = createEmptyDataArray(field.rows, field.columns)
+                val started = parcel.readInt() == 1
                 parcel.readByteArray(state)
-                return Board(field, state)
+                return Board(field, state, started)
             }
 
             override fun newArray(size: Int) = arrayOfNulls<Board>(size)
@@ -284,6 +287,7 @@ class Board private constructor(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         with(parcel) {
             writeParcelable(field, 0)
+            writeInt(if (started) 1 else 0)
             writeByteArray(data)
         }
     }
