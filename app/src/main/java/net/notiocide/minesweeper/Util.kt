@@ -2,6 +2,7 @@ package net.notiocide.minesweeper
 
 import android.content.SharedPreferences
 import net.notiocide.minesweeper.game.Preset
+import kotlin.math.ceil
 
 const val PREFS_NAME = "net.notiocide.minesweeper:preferences"
 
@@ -26,3 +27,5 @@ fun SharedPreferences.Editor.putPreset(preset: Preset) {
     putInt(KEY_COLUMNS, preset.columns)
     putInt(KEY_MINES, preset.mines)
 }
+
+fun Float.roundUp() = ceil(this).toInt()
