@@ -32,6 +32,13 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
     constructor(context: Context, board: Board, settings: GameSettings) : this(context, null, board, settings)
     constructor(context: Context) : this(context, null)
 
+    @FunctionalInterface
+    interface OnMoveListener {
+
+        fun onMove(board: Board, state: Board.State)
+
+    }
+
     private var _board = board
 
     var board
@@ -96,7 +103,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
     var moveListener: OnMoveListener? = null
 
     private fun recalculate() {
-        dividerSize = 2 * dp
+        dividerSize = 3 * dp
         doubleDividerSize = 2 * dividerSize
         halfDividerSize = dividerSize / 2
 
@@ -366,11 +373,25 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
         }
     }
 
-    @FunctionalInterface
-    interface OnMoveListener {
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
 
-        fun onMove(board: Board, state: Board.State)
+        val width = when (widthMode) {
+            MeasureSpec.EXACTLY -> widthSize
+            MeasureSpec.AT_MOST -> min(boardWidth.roundUp(), widthSize)
+            else -> boardWidth.roundUp()
+        }
 
+        val height = when (heightMode) {
+            MeasureSpec.EXACTLY -> heightSize
+            MeasureSpec.AT_MOST -> min(boardHeight.roundUp(), heightSize)
+            else -> boardHeight.roundUp()
+        }
+
+        setMeasuredDimension(width, height)
     }
 
 }
