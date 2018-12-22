@@ -144,17 +144,20 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
         override fun onDoubleTapEvent(e: MotionEvent) = true
         override fun onDown(e: MotionEvent) = true
 
-        private fun locate(e: MotionEvent): Point {
-            val totalX = viewportX + e.x
-            val totalY = viewportY + e.y
+        private fun locate(e: MotionEvent): Point? {
+            return board?.let { board ->
+                val totalX = viewportX + e.x
+                val totalY = viewportY + e.y
 
-            val effectiveX = max(0f, min(totalX - halfDividerSize, boardWidth - halfDividerSize))
-            val effectiveY = max(0f, min(totalY - halfDividerSize, boardHeight - halfDividerSize))
+                val effectiveX = max(0f, min(totalX - halfDividerSize, boardWidth - halfDividerSize))
+                val effectiveY = max(0f, min(totalY - halfDividerSize, boardHeight - halfDividerSize))
 
-            val column = (effectiveX / (dividerSize + cellSize)).toInt()
-            val row = (effectiveY / (dividerSize + cellSize)).toInt()
+                val column = (effectiveX / (dividerSize + cellSize)).toInt()
+                val row = (effectiveY / (dividerSize + cellSize)).toInt()
 
-            return Point(row, column)
+                if (row !in 0 until board.rows || column !in 0 until board.columns) null
+                else Point(row, column)
+            }
         }
 
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
@@ -162,7 +165,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
                 board?.let { board ->
                     if (board.state != Board.State.Neutral) return true
 
-                    val (row, column) = locate(e)
+                    val (row, column) = locate(e) ?: return true
 
                     if (board.isFlagged(row, column) || board.isRevealed(row, column)) return true
                     if (!board.started && settings?.safe == true) board.ensureSafe(row, column)
@@ -181,7 +184,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
                 board?.let { board ->
                     if (board.state != Board.State.Neutral) return true
 
-                    val (row, column) = locate(e)
+                    val (row, column) = locate(e) ?: return true
 
                     if (board.isFlagged(row, column) || board.isRevealed(row, column)) return true
                     if (!board.started && settings?.safe == true) board.ensureSafe(row, column)
@@ -199,7 +202,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
             board?.let { board ->
                 if (board.state != Board.State.Neutral) return
 
-                val (row, column) = locate(e)
+                val (row, column) = locate(e) ?: return
 
                 board.push(ToggleFlagMove(row, column))
                 invalidate()
@@ -213,7 +216,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
                 board?.let { board ->
                     if (board.state != Board.State.Neutral) return true
 
-                    val (row, column) = locate(e)
+                    val (row, column) = locate(e) ?: return true
 
                     board.push(AdjacentRevealMove(row, column))
                     invalidate()
