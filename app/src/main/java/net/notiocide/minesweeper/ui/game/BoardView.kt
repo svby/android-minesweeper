@@ -14,16 +14,20 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.GestureDetectorCompat
 import net.notiocide.minesweeper.R
 import net.notiocide.minesweeper.game.Board
+import net.notiocide.minesweeper.game.GameSettings
+import net.notiocide.minesweeper.game.moves.FloodRevealMove
+import net.notiocide.minesweeper.game.moves.ToggleFlagMove
 import net.notiocide.minesweeper.roundUp
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(context, attrs) {
+class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var settings: GameSettings?) :
+    View(context, attrs) {
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, null)
-    constructor(context: Context, board: Board) : this(context, null, board)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, null, null)
+    constructor(context: Context, board: Board, settings: GameSettings) : this(context, null, board, settings)
     constructor(context: Context) : this(context, null)
 
     private var _board = board
@@ -33,6 +37,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
         set(value) {
             _board = value
             recalculate()
+            invalidate()
         }
 
     private val dp by lazy { TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.0f, resources.displayMetrics) }
@@ -68,30 +73,32 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
     }
 
     val textPaint = Paint().apply {
-        textSize = 10 * sp
         color = Color.BLACK
     }
 
     val cellPaint = Paint(basePaint).apply { color = Color.WHITE }
     val uncoveredPaint = Paint(basePaint).apply { color = Color.WHITE }
     val coveredPaint = Paint(basePaint).apply { color = Color.parseColor("#dfe4ea") }
-    val minePaint = Paint(basePaint).apply { color = Color.parseColor("#ff4757") }
+    val minePaint = Paint(basePaint).apply { color = Color.parseColor("#ffc7cc") }
     val flagPaint = Paint(basePaint).apply { color = Color.parseColor("#f8a5c2") }
 
     val dividerPaint = Paint().apply {
-        flags = Paint.ANTI_ALIAS_FLAG
         style = Paint.Style.STROKE
-        strokeWidth = dividerSize
         color = Color.LTGRAY
     }
 
     private val detector = GestureDetectorCompat(context, GestureListener()).apply { setIsLongpressEnabled(true) }
     private val scroller = OverScroller(context)
 
+    var moveListener: OnMoveListener? = null
+
     private fun recalculate() {
         dividerSize = 2 * dp
         doubleDividerSize = 2 * dividerSize
         halfDividerSize = dividerSize / 2
+
+        dividerPaint.strokeWidth = dividerSize
+        textPaint.textSize = 20 * sp
 
         cellSize = 50 * dp
         totalCellSize = doubleDividerSize + cellSize
@@ -132,10 +139,50 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
     private inner class GestureListener : GestureDetector.OnGestureListener {
 
         override fun onShowPress(e: MotionEvent) = Unit
-        override fun onSingleTapUp(e: MotionEvent) = false
-        override fun onLongPress(e: MotionEvent) = Unit
 
         override fun onDown(e: MotionEvent) = true
+
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
+            board?.let { board ->
+                if (board.state != Board.State.Neutral) return true
+                val totalX = viewportX + e.x
+                val totalY = viewportY + e.y
+
+                val effectiveX = max(0f, min(totalX - halfDividerSize, boardWidth - halfDividerSize))
+                val effectiveY = max(0f, min(totalY - halfDividerSize, boardHeight - halfDividerSize))
+
+                val column = (effectiveX / (dividerSize + cellSize)).toInt()
+                val row = (effectiveY / (dividerSize + cellSize)).toInt()
+                if (board.isFlagged(row, column) || board.isRevealed(row, column)) return true
+
+                if (!board.started && settings?.safe == true) board.ensureSafe(row, column)
+
+                board.push(FloodRevealMove(row, column))
+                invalidate()
+
+                moveListener?.onMove(board, board.state)
+            }
+            return true
+        }
+
+        override fun onLongPress(e: MotionEvent) {
+            board?.let { board ->
+                if (board.state != Board.State.Neutral) return
+                val totalX = viewportX + e.x
+                val totalY = viewportY + e.y
+
+                val effectiveX = max(0f, min(totalX - halfDividerSize, boardWidth - halfDividerSize))
+                val effectiveY = max(0f, min(totalY - halfDividerSize, boardHeight - halfDividerSize))
+
+                val column = (effectiveX / (dividerSize + cellSize)).toInt()
+                val row = (effectiveY / (dividerSize + cellSize)).toInt()
+
+                board.push(ToggleFlagMove(row, column))
+                invalidate()
+
+                moveListener?.onMove(board, board.state)
+            }
+        }
 
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             scrollTo(viewportX + distanceX, viewportY + distanceY)
@@ -156,18 +203,27 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
             return true
         }
 
-        private inner class FlingRunnable(private val scroller: OverScroller) : Runnable {
+    }
 
-            override fun run() {
-                if (scroller.computeScrollOffset()) {
-                    scrollTo(scroller.currX.toFloat(), scroller.currY.toFloat())
-                    invalidate()
-                    post(this)
-                }
+    private inner class FlingRunnable(private val scroller: OverScroller) : Runnable {
+
+        override fun run() {
+            if (scroller.computeScrollOffset()) {
+                scrollTo(scroller.currX.toFloat(), scroller.currY.toFloat())
+                invalidate()
+                post(this)
             }
-
         }
 
+    }
+
+    fun undo(): Boolean {
+        board?.let { board ->
+            if (!board.pop()) return false
+            invalidate()
+            moveListener?.onMove(board, Board.State.Neutral)
+        } ?: return false
+        return true
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -176,7 +232,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
         return true
     }
 
-    val textBounds = Rect()
+    private val textBounds = Rect()
 
     override fun onDraw(canvas: Canvas) {
         board?.let { board ->
@@ -218,7 +274,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
                             val rectW = cellSize
                             val rectH = cellSize
 
-                            var paint = cellPaint
+                            val paint: Paint
                             var bitmap: Bitmap? = null
                             var text: String? = null
                             when {
@@ -228,13 +284,14 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
                                         bitmap = mineBitmap
                                     } else {
                                         paint = uncoveredPaint
-                                        text = cell.adjacentMines.toString()
+                                        text = cell.adjacentMines.let { if (it == 0) null else it.toString() }
                                     }
                                 }
                                 cell.isFlagged -> {
                                     paint = flagPaint
                                     bitmap = flagBitmap
                                 }
+                                else -> paint = coveredPaint
                             }
 
                             drawRect(rectX, rectY, rectX + rectW, rectY + rectH, paint)
@@ -253,20 +310,22 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?) : View(co
                                 drawText(
                                     it,
                                     rectX + (rectW - textBounds.width()) / 2,
-                                    rectY + (rectH - textBounds.height()) / 2,
+                                    rectY + (rectH + textBounds.height()) / 2,
                                     textPaint
                                 )
                             }
                         }
                     }
                 }
-
-//                drawRect(50.0f, 50.0f, 50.0f + dividerSize, 50.0f + dividerSize, Paint().apply {
-//                    style = Paint.Style.FILL
-//                    color = Color.GREEN
-//                })
             }
         }
+    }
+
+    @FunctionalInterface
+    interface OnMoveListener {
+
+        fun onMove(board: Board, state: Board.State)
+
     }
 
 }
