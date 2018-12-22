@@ -1,6 +1,7 @@
 package net.notiocide.minesweeper
 
 import android.content.SharedPreferences
+import net.notiocide.minesweeper.game.Board
 import net.notiocide.minesweeper.game.Preset
 import kotlin.math.ceil
 
@@ -29,3 +30,29 @@ fun SharedPreferences.Editor.putPreset(preset: Preset) {
 }
 
 fun Float.roundUp() = ceil(this).toInt()
+
+inline fun Board.forEachEightNeighbor(row: Int, column: Int, action: (row: Int, column: Int) -> Unit) {
+    if (row + 1 in 0 until rows && column in 0 until columns) action(row + 1, column)
+    if (row - 1 in 0 until rows && column in 0 until columns) action(row - 1, column)
+    if (row in 0 until rows && column + 1 in 0 until columns) action(row, column + 1)
+    if (row in 0 until rows && column - 1 in 0 until columns) action(row, column - 1)
+    if (row + 1 in 0 until rows && column + 1 in 0 until columns) action(row + 1, column + 1)
+    if (row - 1 in 0 until rows && column + 1 in 0 until columns) action(row - 1, column + 1)
+    if (row + 1 in 0 until rows && column - 1 in 0 until columns) action(row + 1, column - 1)
+    if (row - 1 in 0 until rows && column - 1 in 0 until columns) action(row - 1, column - 1)
+}
+
+inline fun Board.forEachFourNeighbor(row: Int, column: Int, action: (row: Int, column: Int) -> Unit) {
+    if (row + 1 in 0 until rows && column in 0 until column) action(row + 1, column)
+    if (row - 1 in 0 until rows && column in 0 until column) action(row - 1, column)
+    if (row in 0 until rows && column + 1 in 0 until column) action(row, column + 1)
+    if (row in 0 until rows && column - 1 in 0 until column) action(row, column - 1)
+}
+
+fun Board.eightNeighbors(row: Int, column: Int) = sequence {
+    forEachEightNeighbor(row, column) { row, column -> yield(Point(row, column)) }
+}
+
+fun Board.fourNeighbors(row: Int, column: Int) = sequence {
+    forEachFourNeighbor(row, column) { row, column -> yield(Point(row, column)) }
+}
