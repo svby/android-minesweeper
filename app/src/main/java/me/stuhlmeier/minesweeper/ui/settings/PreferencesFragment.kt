@@ -18,8 +18,10 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 it.get<Preference>("width")!!.summary = prefs.getInt(KEY_COLUMNS, 1).toString()
                 it.get<Preference>("height")!!.summary = prefs.getInt(KEY_ROWS, 1).toString()
                 it.get<Preference>("mines")!!.summary = prefs.getInt(KEY_MINES, 1).toString()
-                it.get<SwitchPreferenceCompat>("safe")!!.isChecked = prefs.getBoolean(KEY_SAFE, true)
-                it.get<SwitchPreferenceCompat>("doubletap")!!.isChecked = prefs.getBoolean(KEY_DOUBLETAP, true)
+                it.get<SwitchPreferenceCompat>("safe")!!.isChecked =
+                    prefs.getBoolean(KEY_SAFE, true)
+                it.get<SwitchPreferenceCompat>("chord")!!.isChecked =
+                    prefs.getBoolean(KEY_CHORD, true)
             }
         }
     }
@@ -41,9 +43,9 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             true
         }
 
-        preferenceScreen.get<Preference>("doubletap")!!.setOnPreferenceChangeListener { _, value ->
+        preferenceScreen.get<Preference>("chord")!!.setOnPreferenceChangeListener { _, value ->
             preferenceManager.sharedPreferences.edit {
-                putBoolean(KEY_DOUBLETAP, value as Boolean)
+                putBoolean(KEY_CHORD, value as Boolean)
             }
 
             true

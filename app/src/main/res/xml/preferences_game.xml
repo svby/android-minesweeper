@@ -7,9 +7,9 @@
             app:title="@string/config_safe_first" />
 
         <SwitchPreferenceCompat
-            app:key="doubletap"
-            app:summary="@string/summary_doubletap"
-            app:title="@string/config_doubletap" />
+            app:key="chord"
+            app:summary="@string/summary_chord"
+            app:title="@string/config_chord" />
 
         <PreferenceCategory app:title="Board settings">
             <Preference

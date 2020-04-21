@@ -16,7 +16,7 @@ import me.stuhlmeier.minesweeper.Point
 import me.stuhlmeier.minesweeper.R
 import me.stuhlmeier.minesweeper.game.Board
 import me.stuhlmeier.minesweeper.game.GameSettings
-import me.stuhlmeier.minesweeper.game.moves.AdjacentRevealMove
+import me.stuhlmeier.minesweeper.game.moves.ChordMove
 import me.stuhlmeier.minesweeper.game.moves.FloodRevealMove
 import me.stuhlmeier.minesweeper.game.moves.ToggleFlagMove
 import me.stuhlmeier.minesweeper.roundUp
@@ -169,7 +169,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
         }
 
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-            if (settings?.doubleTapEnabled == true) {
+            if (settings?.chordEnabled == true) {
                 board?.let { board ->
                     if (board.state != Board.State.Neutral) return true
 
@@ -188,7 +188,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
         }
 
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            if (settings?.doubleTapEnabled != true) {
+            if (settings?.chordEnabled != true) {
                 board?.let { board ->
                     if (board.state != Board.State.Neutral) return true
 
@@ -220,13 +220,13 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
         }
 
         override fun onDoubleTap(e: MotionEvent): Boolean {
-            if (settings?.doubleTapEnabled == true) {
+            if (settings?.chordEnabled == true) {
                 board?.let { board ->
                     if (board.state != Board.State.Neutral) return true
 
                     val (row, column) = locate(e) ?: return true
 
-                    board.push(AdjacentRevealMove(row, column))
+                    board.push(ChordMove(row, column))
                     invalidate()
 
                     moveListener?.onMove(board, board.state)
