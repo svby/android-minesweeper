@@ -1,4 +1,4 @@
-package net.notiocide.minesweeper.ui.game
+package me.stuhlmeier.minesweeper.ui.game
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -12,14 +12,14 @@ import android.view.View
 import android.widget.OverScroller
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.GestureDetectorCompat
-import net.notiocide.minesweeper.Point
-import net.notiocide.minesweeper.R
-import net.notiocide.minesweeper.game.Board
-import net.notiocide.minesweeper.game.GameSettings
-import net.notiocide.minesweeper.game.moves.AdjacentRevealMove
-import net.notiocide.minesweeper.game.moves.FloodRevealMove
-import net.notiocide.minesweeper.game.moves.ToggleFlagMove
-import net.notiocide.minesweeper.roundUp
+import me.stuhlmeier.minesweeper.Point
+import me.stuhlmeier.minesweeper.R
+import me.stuhlmeier.minesweeper.game.Board
+import me.stuhlmeier.minesweeper.game.GameSettings
+import me.stuhlmeier.minesweeper.game.moves.AdjacentRevealMove
+import me.stuhlmeier.minesweeper.game.moves.FloodRevealMove
+import me.stuhlmeier.minesweeper.game.moves.ToggleFlagMove
+import me.stuhlmeier.minesweeper.roundUp
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max

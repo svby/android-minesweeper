@@ -1,4 +1,4 @@
-package net.notiocide.minesweeper.game
+package me.stuhlmeier.minesweeper.game
 
 data class Cell(
     val row: Int,

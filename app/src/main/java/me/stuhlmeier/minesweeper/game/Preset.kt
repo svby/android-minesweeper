@@ -1,8 +1,8 @@
-package net.notiocide.minesweeper.game
+package me.stuhlmeier.minesweeper.game
 
-import net.notiocide.minesweeper.game.generators.FieldGenerationArguments
-import net.notiocide.minesweeper.game.generators.FieldGenerator
-import net.notiocide.minesweeper.game.generators.RandomFieldGenerator
+import me.stuhlmeier.minesweeper.game.generators.FieldGenerationArguments
+import me.stuhlmeier.minesweeper.game.generators.FieldGenerator
+import me.stuhlmeier.minesweeper.game.generators.RandomFieldGenerator
 
 enum class Preset(val rows: Int, val columns: Int, val mines: Int) {
 

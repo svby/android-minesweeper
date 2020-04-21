@@ -1,10 +1,10 @@
-package net.notiocide.minesweeper.game
+package me.stuhlmeier.minesweeper.game
 
 import android.os.Parcel
 import android.os.Parcelable
-import net.notiocide.minesweeper.Point
-import net.notiocide.minesweeper.boundsCheck
-import net.notiocide.minesweeper.game.moves.Move
+import me.stuhlmeier.minesweeper.Point
+import me.stuhlmeier.minesweeper.boundsCheck
+import me.stuhlmeier.minesweeper.game.moves.Move
 import java.io.ObjectInputStream
 import java.io.Serializable
 import java.util.*

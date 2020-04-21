@@ -1,8 +1,8 @@
-package net.notiocide.minesweeper.game.moves
+package me.stuhlmeier.minesweeper.game.moves
 
-import net.notiocide.minesweeper.Point
-import net.notiocide.minesweeper.eightNeighbors
-import net.notiocide.minesweeper.game.Board
+import me.stuhlmeier.minesweeper.Point
+import me.stuhlmeier.minesweeper.eightNeighbors
+import me.stuhlmeier.minesweeper.game.Board
 import java.util.*
 import kotlin.collections.HashSet
 

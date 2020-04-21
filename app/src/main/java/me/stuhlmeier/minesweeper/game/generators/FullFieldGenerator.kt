@@ -1,6 +1,6 @@
-package net.notiocide.minesweeper.game.generators
+package me.stuhlmeier.minesweeper.game.generators
 
-import net.notiocide.minesweeper.game.Field
+import me.stuhlmeier.minesweeper.game.Field
 
 class FullFieldGenerator : FieldGenerator {
 

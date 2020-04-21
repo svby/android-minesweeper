@@ -1,4 +1,4 @@
-package net.notiocide.minesweeper.ui.game
+package me.stuhlmeier.minesweeper.ui.game
 
 import android.app.AlertDialog
 import android.content.Context
@@ -9,13 +9,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_game.*
-import net.notiocide.minesweeper.KEY_BOARD
-import net.notiocide.minesweeper.PREFS_NAME
-import net.notiocide.minesweeper.R
-import net.notiocide.minesweeper.game.Board
-import net.notiocide.minesweeper.game.GameSettings
-import net.notiocide.minesweeper.game.generators.FieldGenerationArguments
-import net.notiocide.minesweeper.game.generators.RandomFieldGenerator
+import me.stuhlmeier.minesweeper.KEY_BOARD
+import me.stuhlmeier.minesweeper.PREFS_NAME
+import me.stuhlmeier.minesweeper.R
+import me.stuhlmeier.minesweeper.game.Board
+import me.stuhlmeier.minesweeper.game.GameSettings
+import me.stuhlmeier.minesweeper.game.generators.FieldGenerationArguments
+import me.stuhlmeier.minesweeper.game.generators.RandomFieldGenerator
 
 class GameFragment : Fragment() {
 

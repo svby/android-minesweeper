@@ -1,6 +1,6 @@
-package net.notiocide.minesweeper.game.moves
+package me.stuhlmeier.minesweeper.game.moves
 
-import net.notiocide.minesweeper.game.Board
+import me.stuhlmeier.minesweeper.game.Board
 
 class ToggleFlagMove(val row: Int, val column: Int) : Move {
 

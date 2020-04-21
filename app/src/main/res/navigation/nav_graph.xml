@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/gameFragment"
-        android:name="net.notiocide.minesweeper.ui.game.GameFragment"
+        android:name="me.stuhlmeier.minesweeper.ui.game.GameFragment"
         android:label="@string/app_name">
         <action
             android:id="@+id/action_gameFragment_to_settingsFragment"
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="net.notiocide.minesweeper.ui.settings.PreferencesFragment"
+        android:name="me.stuhlmeier.minesweeper.ui.settings.PreferencesFragment"
         android:label="@string/action_settings">
         <action
             android:id="@+id/action_settingsFragment_to_presetSettingsFragment"
@@ -23,6 +23,6 @@
     </fragment>
     <fragment
         android:id="@+id/presetSettingsFragment"
-        android:name="net.notiocide.minesweeper.ui.settings.PresetSettingsFragment"
+        android:name="me.stuhlmeier.minesweeper.ui.settings.PresetSettingsFragment"
         android:label="@string/action_set_preset" />
 </navigation>

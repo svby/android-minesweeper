@@ -30,5 +30,4 @@
         android:icon="@drawable/ic_settings"
         app:showAsAction="ifRoom"
         tools:ignore="AppCompatResource" />
-
 </menu>

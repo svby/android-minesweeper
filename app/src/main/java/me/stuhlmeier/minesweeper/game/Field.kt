@@ -1,8 +1,8 @@
-package net.notiocide.minesweeper.game
+package me.stuhlmeier.minesweeper.game
 
 import android.os.Parcel
 import android.os.Parcelable
-import net.notiocide.minesweeper.boundsCheck
+import me.stuhlmeier.minesweeper.boundsCheck
 import java.io.ObjectInputStream
 import java.io.Serializable
 import kotlin.experimental.and

@@ -1,11 +1,11 @@
-package net.notiocide.minesweeper
+package me.stuhlmeier.minesweeper
 
 import android.content.SharedPreferences
-import net.notiocide.minesweeper.game.Board
-import net.notiocide.minesweeper.game.Preset
+import me.stuhlmeier.minesweeper.game.Board
+import me.stuhlmeier.minesweeper.game.Preset
 import kotlin.math.ceil
 
-const val PREFS_NAME = "net.notiocide.minesweeper:preferences"
+const val PREFS_NAME = "me.stuhlmeier.minesweeper:preferences"
 
 const val KEY_BOARD = "minesweeper:state:board"
 

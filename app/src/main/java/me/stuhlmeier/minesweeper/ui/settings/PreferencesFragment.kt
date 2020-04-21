@@ -1,4 +1,4 @@
-package net.notiocide.minesweeper.ui.settings
+package me.stuhlmeier.minesweeper.ui.settings
 
 import android.os.Bundle
 import androidx.core.content.edit
@@ -7,7 +7,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import androidx.preference.get
-import net.notiocide.minesweeper.*
+import me.stuhlmeier.minesweeper.*
 import kotlin.math.min
 
 class PreferencesFragment : PreferenceFragmentCompat() {
@@ -15,11 +15,11 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun updateValues() {
         preferenceManager.sharedPreferences.let { prefs ->
             preferenceScreen.let {
-                it["width"].summary = prefs.getInt(KEY_COLUMNS, 1).toString()
-                it["height"].summary = prefs.getInt(KEY_ROWS, 1).toString()
-                it["mines"].summary = prefs.getInt(KEY_MINES, 1).toString()
-                (it["safe"] as SwitchPreferenceCompat).isChecked = prefs.getBoolean(KEY_SAFE, true)
-                (it["doubletap"] as SwitchPreferenceCompat).isChecked = prefs.getBoolean(KEY_DOUBLETAP, true)
+                it.get<Preference>("width")!!.summary = prefs.getInt(KEY_COLUMNS, 1).toString()
+                it.get<Preference>("height")!!.summary = prefs.getInt(KEY_ROWS, 1).toString()
+                it.get<Preference>("mines")!!.summary = prefs.getInt(KEY_MINES, 1).toString()
+                it.get<SwitchPreferenceCompat>("safe")!!.isChecked = prefs.getBoolean(KEY_SAFE, true)
+                it.get<SwitchPreferenceCompat>("doubletap")!!.isChecked = prefs.getBoolean(KEY_DOUBLETAP, true)
             }
         }
     }
@@ -33,7 +33,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.preferences_game, rootKey)
         preferenceManager.sharedPreferencesName = PREFS_NAME
 
-        preferenceScreen["safe"].setOnPreferenceChangeListener { _, value ->
+        preferenceScreen.get<Preference>("safe")!!.setOnPreferenceChangeListener { _, value ->
             preferenceManager.sharedPreferences.edit {
                 putBoolean(KEY_SAFE, value as Boolean)
             }
@@ -41,7 +41,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             true
         }
 
-        preferenceScreen["doubletap"].setOnPreferenceChangeListener { _, value ->
+        preferenceScreen.get<Preference>("doubletap")!!.setOnPreferenceChangeListener { _, value ->
             preferenceManager.sharedPreferences.edit {
                 putBoolean(KEY_DOUBLETAP, value as Boolean)
             }
@@ -67,7 +67,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                         }
                         updateValues()
                     }
-                    dialog.show(fragmentManager, "spinner")
+                    dialog.show(parentFragmentManager, "spinner")
                 }
                 "height" -> {
                     val dialog = NumberPickerDialogFragment(
@@ -83,7 +83,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                         }
                         updateValues()
                     }
-                    dialog.show(fragmentManager, "spinner")
+                    dialog.show(parentFragmentManager, "spinner")
                 }
                 "mines" -> {
                     val totalSquares = prefs.getInt(KEY_ROWS, 1) * prefs.getInt(KEY_COLUMNS, 1)
@@ -97,7 +97,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                         prefs.edit { putInt(KEY_MINES, it) }
                         updateValues()
                     }
-                    dialog.show(fragmentManager, "spinner")
+                    dialog.show(parentFragmentManager, "spinner")
                 }
                 "set_preset" -> {
                     NavHostFragment.findNavController(this)

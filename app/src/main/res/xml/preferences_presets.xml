@@ -4,15 +4,11 @@
         <Preference
             app:key="preset_easy"
             app:title="@string/difficulty_easy" />
-
         <Preference
             app:key="preset_medium"
             app:title="@string/difficulty_medium" />
-
         <Preference
             app:key="preset_hard"
             app:title="@string/difficulty_hard" />
-
     </PreferenceCategory>
-
 </androidx.preference.PreferenceScreen>

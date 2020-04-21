@@ -1,7 +1,7 @@
-package net.notiocide.minesweeper.game.moves
+package me.stuhlmeier.minesweeper.game.moves
 
-import net.notiocide.minesweeper.forEachEightNeighbor
-import net.notiocide.minesweeper.game.Board
+import me.stuhlmeier.minesweeper.forEachEightNeighbor
+import me.stuhlmeier.minesweeper.game.Board
 
 class AdjacentRevealMove(val row: Int, val column: Int) : Move {
 

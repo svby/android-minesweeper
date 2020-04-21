@@ -15,22 +15,16 @@
             <Preference
                 app:key="width"
                 app:title="@string/config_columns" />
-
             <Preference
                 app:key="height"
                 app:title="@string/config_rows" />
-
             <Preference
                 app:key="mines"
                 app:title="@string/config_mines" />
-
             <Preference
                 app:key="set_preset"
                 app:summary="@string/summary_set_preset"
                 app:title="@string/action_set_preset" />
-
         </PreferenceCategory>
-
     </PreferenceCategory>
-
 </androidx.preference.PreferenceScreen>

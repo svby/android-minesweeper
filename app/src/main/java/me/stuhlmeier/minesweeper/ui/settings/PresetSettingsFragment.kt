@@ -1,4 +1,4 @@
-package net.notiocide.minesweeper.ui.settings
+package me.stuhlmeier.minesweeper.ui.settings
 
 import android.os.Bundle
 import androidx.core.content.edit
@@ -6,10 +6,10 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.get
-import net.notiocide.minesweeper.PREFS_NAME
-import net.notiocide.minesweeper.R
-import net.notiocide.minesweeper.game.Preset
-import net.notiocide.minesweeper.putPreset
+import me.stuhlmeier.minesweeper.PREFS_NAME
+import me.stuhlmeier.minesweeper.R
+import me.stuhlmeier.minesweeper.game.Preset
+import me.stuhlmeier.minesweeper.putPreset
 
 class PresetSettingsFragment : PreferenceFragmentCompat() {
 
@@ -19,10 +19,10 @@ class PresetSettingsFragment : PreferenceFragmentCompat() {
 
         preferenceScreen.let {
             val formatString = getString(R.string.summary_set_preset_individual)
-            it["preset_easy"].summary = formatString.format(Preset.EASY.rows, Preset.EASY.columns, Preset.EASY.mines)
-            it["preset_medium"].summary =
+            it.get<Preference>("preset_easy")!!.summary = formatString.format(Preset.EASY.rows, Preset.EASY.columns, Preset.EASY.mines)
+            it.get<Preference>("preset_medium")!!.summary =
                     formatString.format(Preset.MEDIUM.rows, Preset.MEDIUM.columns, Preset.MEDIUM.mines)
-            it["preset_hard"].summary = formatString.format(Preset.HARD.rows, Preset.HARD.columns, Preset.HARD.mines)
+            it.get<Preference>("preset_hard")!!.summary = formatString.format(Preset.HARD.rows, Preset.HARD.columns, Preset.HARD.mines)
         }
     }
 
