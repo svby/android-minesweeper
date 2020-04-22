@@ -14,6 +14,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.GestureDetectorCompat
 import me.stuhlmeier.minesweeper.Point
 import me.stuhlmeier.minesweeper.R
+import me.stuhlmeier.minesweeper.eightNeighbors
 import me.stuhlmeier.minesweeper.game.Board
 import me.stuhlmeier.minesweeper.game.GameSettings
 import me.stuhlmeier.minesweeper.game.moves.ChordMove
@@ -25,11 +26,22 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var settings: GameSettings?) :
+class BoardView(
+    context: Context,
+    attrs: AttributeSet?,
+    board: Board?,
+    var settings: GameSettings?
+) :
     View(context, attrs) {
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, null, null)
-    constructor(context: Context, board: Board, settings: GameSettings) : this(context, null, board, settings)
+    constructor(context: Context, board: Board, settings: GameSettings) : this(
+        context,
+        null,
+        board,
+        settings
+    )
+
     constructor(context: Context) : this(context, null)
 
     @FunctionalInterface
@@ -49,8 +61,20 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
             invalidate()
         }
 
-    private val dp by lazy { TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.0f, resources.displayMetrics) }
-    private val sp by lazy { TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 1.0f, resources.displayMetrics) }
+    private val dp by lazy {
+        TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            1.0f,
+            resources.displayMetrics
+        )
+    }
+    private val sp by lazy {
+        TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP,
+            1.0f,
+            resources.displayMetrics
+        )
+    }
     private val iconSize = 0.7f
 
     private var boardWidth = 0f
@@ -70,6 +94,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
     // TODO: This deprecation should be ignored (higher API level)
     @Suppress("DEPRECATION")
     private val flag = resources.getDrawable(R.drawable.ic_flag)
+
     @Suppress("DEPRECATION")
     private val mine = resources.getDrawable(R.drawable.ic_mine)
 
@@ -97,7 +122,8 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
         color = Color.LTGRAY
     }
 
-    private val detector = GestureDetectorCompat(context, GestureListener()).apply { setIsLongpressEnabled(true) }
+    private val detector =
+        GestureDetectorCompat(context, GestureListener()).apply { setIsLongpressEnabled(true) }
     private val scroller = OverScroller(context)
 
     var moveListener: OnMoveListener? = null
@@ -124,12 +150,12 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
             boardHeight = 0f
         } else {
             boardWidth =
-                    if (board.columns == 0) 0f
-                    else (board.columns * cellSize + (board.columns + 1) * dividerSize)
+                if (board.columns == 0) 0f
+                else (board.columns * cellSize + (board.columns + 1) * dividerSize)
 
             boardHeight =
-                    if (board.rows == 0) 0f
-                    else (board.rows * cellSize + (board.rows + 1) * dividerSize)
+                if (board.rows == 0) 0f
+                else (board.rows * cellSize + (board.rows + 1) * dividerSize)
         }
     }
 
@@ -146,7 +172,8 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
         viewportY = max(0f, min(viewportMaxY, y))
     }
 
-    private inner class GestureListener : GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+    private inner class GestureListener : GestureDetector.OnGestureListener,
+        GestureDetector.OnDoubleTapListener {
 
         override fun onShowPress(e: MotionEvent) = Unit
         override fun onDoubleTapEvent(e: MotionEvent) = true
@@ -157,8 +184,10 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
                 val totalX = viewportX + e.x
                 val totalY = viewportY + e.y
 
-                val effectiveX = max(0f, min(totalX - halfDividerSize, boardWidth - halfDividerSize))
-                val effectiveY = max(0f, min(totalY - halfDividerSize, boardHeight - halfDividerSize))
+                val effectiveX =
+                    max(0f, min(totalX - halfDividerSize, boardWidth - halfDividerSize))
+                val effectiveY =
+                    max(0f, min(totalY - halfDividerSize, boardHeight - halfDividerSize))
 
                 val column = (effectiveX / (dividerSize + cellSize)).toInt()
                 val row = (effectiveY / (dividerSize + cellSize)).toInt()
@@ -168,6 +197,24 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
             }
         }
 
+        private fun handleSingleTap(board: Board, row: Int, column: Int) {
+            if (board.isFlagged(row, column)) return
+            if (!board.started && settings?.safe == true) board.ensureSafe(row, column)
+
+            if (board.isRevealed(row, column)) {
+                // Allow chord if all flags have been assigned to neighbors
+                if (board.eightNeighbors(row, column)
+                        .count { board.isFlagged(it.first, it.second) } ==
+                    board.getAdjacentMines(row, column)
+                ) board.push(ChordMove(row, column))
+                else return
+            } else board.push(FloodRevealMove(row, column))
+
+            invalidate()
+
+            moveListener?.onMove(board, board.state)
+        }
+
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
             if (settings?.chordEnabled == true) {
                 board?.let { board ->
@@ -175,13 +222,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
 
                     val (row, column) = locate(e) ?: return true
 
-                    if (board.isFlagged(row, column) || board.isRevealed(row, column)) return true
-                    if (!board.started && settings?.safe == true) board.ensureSafe(row, column)
-
-                    board.push(FloodRevealMove(row, column))
-                    invalidate()
-
-                    moveListener?.onMove(board, board.state)
+                    handleSingleTap(board, row, column)
                 }
             }
             return true
@@ -194,13 +235,7 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
 
                     val (row, column) = locate(e) ?: return true
 
-                    if (board.isFlagged(row, column) || board.isRevealed(row, column)) return true
-                    if (!board.started && settings?.safe == true) board.ensureSafe(row, column)
-
-                    board.push(FloodRevealMove(row, column))
-                    invalidate()
-
-                    moveListener?.onMove(board, board.state)
+                    handleSingleTap(board, row, column)
                 }
             }
             return true
@@ -235,13 +270,23 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
             return true
         }
 
-        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+        override fun onScroll(
+            e1: MotionEvent,
+            e2: MotionEvent,
+            distanceX: Float,
+            distanceY: Float
+        ): Boolean {
             scrollTo(viewportX + distanceX, viewportY + distanceY)
             invalidate()
             return true
         }
 
-        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+        override fun onFling(
+            e1: MotionEvent,
+            e2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
             scroller.forceFinished(true)
             scroller.fling(
                 viewportX.toInt(), viewportY.toInt(),
@@ -288,14 +333,16 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
     override fun onDraw(canvas: Canvas) {
         board?.let { board ->
             with(canvas) {
-                val startRow = max(0f, floor((viewportY - dividerSize) / (dividerSize + cellSize))).toInt()
+                val startRow =
+                    max(0f, floor((viewportY - dividerSize) / (dividerSize + cellSize))).toInt()
                 val endRow =
                     min(
                         board.rows.toFloat(),
                         ceil((viewportY + height - dividerSize) / (dividerSize + cellSize)) + 1
                     ).toInt()
 
-                val startColumn = max(0f, floor((viewportX - dividerSize) / (dividerSize + cellSize))).toInt()
+                val startColumn =
+                    max(0f, floor((viewportX - dividerSize) / (dividerSize + cellSize))).toInt()
                 val endColumn =
                     min(
                         board.columns.toFloat(),
@@ -335,7 +382,8 @@ class BoardView(context: Context, attrs: AttributeSet?, board: Board?, var setti
                                         bitmap = mineBitmap
                                     } else {
                                         paint = uncoveredPaint
-                                        text = cell.adjacentMines.let { if (it == 0) null else it.toString() }
+                                        text =
+                                            cell.adjacentMines.let { if (it == 0) null else it.toString() }
                                     }
                                 }
                                 cell.isFlagged -> {
