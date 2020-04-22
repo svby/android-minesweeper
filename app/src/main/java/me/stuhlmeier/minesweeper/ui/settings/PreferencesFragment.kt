@@ -21,6 +21,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                     prefs.getBoolean(KEY_SAFE, true)
                 it.get<SwitchPreferenceCompat>("chord")!!.isChecked =
                     prefs.getBoolean(KEY_CHORD, true)
+                it.get<SwitchPreferenceCompat>("invert")!!.isChecked =
+                    prefs.getBoolean(KEY_INVERT, false)
             }
         }
     }
@@ -38,7 +40,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             preferenceManager.sharedPreferences.edit {
                 putBoolean(KEY_SAFE, value as Boolean)
             }
-
             true
         }
 
@@ -46,7 +47,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             preferenceManager.sharedPreferences.edit {
                 putBoolean(KEY_CHORD, value as Boolean)
             }
+            true
+        }
 
+        preferenceScreen.get<Preference>("invert")!!.setOnPreferenceChangeListener { _, value ->
+            preferenceManager.sharedPreferences.edit {
+                putBoolean(KEY_INVERT, value as Boolean)
+            }
             true
         }
     }

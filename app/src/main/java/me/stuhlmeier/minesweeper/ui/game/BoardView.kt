@@ -192,9 +192,9 @@ class BoardView(
             }
         }
 
-        private fun handleSingleTap(board: Board, row: Int, column: Int) {
-            if (board.isFlagged(row, column)) return
+        private fun moveReveal(board: Board, row: Int, column: Int) {
             if (!board.started && settings?.safe == true) board.ensureSafe(row, column)
+            if (board.isFlagged(row, column)) return
 
             if (board.isRevealed(row, column)) {
                 // Allow chord if all flags have been assigned to neighbors
@@ -204,10 +204,11 @@ class BoardView(
                 ) board.push(ChordMove(row, column))
                 else return
             } else board.push(FloodRevealMove(row, column))
+        }
 
-            invalidate()
-
-            moveListener?.onMove(board, board.state)
+        private fun moveFlag(board: Board, row: Int, column: Int) {
+            if (board.isRevealed(row, column)) return
+            board.push(ToggleFlagMove(row, column))
         }
 
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
@@ -217,7 +218,11 @@ class BoardView(
 
                     val (row, column) = locate(e) ?: return true
 
-                    handleSingleTap(board, row, column)
+                    if (settings?.invertControls == true) moveFlag(board, row, column)
+                    else moveReveal(board, row, column)
+
+                    invalidate()
+                    moveListener?.onMove(board, board.state)
                 }
             }
             return true
@@ -230,7 +235,11 @@ class BoardView(
 
                     val (row, column) = locate(e) ?: return true
 
-                    handleSingleTap(board, row, column)
+                    if (settings?.invertControls == true) moveFlag(board, row, column)
+                    else moveReveal(board, row, column)
+
+                    invalidate()
+                    moveListener?.onMove(board, board.state)
                 }
             }
             return true
@@ -242,9 +251,10 @@ class BoardView(
 
                 val (row, column) = locate(e) ?: return
 
-                board.push(ToggleFlagMove(row, column))
-                invalidate()
+                if (settings?.invertControls == true) moveReveal(board, row, column)
+                else moveFlag(board, row, column)
 
+                invalidate()
                 moveListener?.onMove(board, board.state)
             }
         }
@@ -257,8 +267,8 @@ class BoardView(
                     val (row, column) = locate(e) ?: return true
 
                     board.push(ChordMove(row, column))
-                    invalidate()
 
+                    invalidate()
                     moveListener?.onMove(board, board.state)
                 }
             }

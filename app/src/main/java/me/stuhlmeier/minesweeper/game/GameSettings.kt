@@ -9,7 +9,8 @@ data class GameSettings(
     val columns: Int,
     val mines: Int,
     val safe: Boolean,
-    val chordEnabled: Boolean
+    val chordEnabled: Boolean,
+    val invertControls: Boolean
 ) {
     companion object {
         @JvmStatic
@@ -34,7 +35,8 @@ data class GameSettings(
                 prefs.getInt(KEY_COLUMNS, Preset.EASY.columns),
                 prefs.getInt(KEY_MINES, Preset.EASY.mines),
                 prefs.getBoolean(KEY_SAFE, true),
-                prefs.getBoolean(KEY_CHORD, true)
+                prefs.getBoolean(KEY_CHORD, true),
+                prefs.getBoolean(KEY_INVERT, true)
             )
         }
     }

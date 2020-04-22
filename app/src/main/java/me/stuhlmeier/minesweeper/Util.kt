@@ -14,6 +14,7 @@ const val KEY_COLUMNS = "minesweeper:config:columns"
 const val KEY_MINES = "minesweeper:config:mines"
 const val KEY_SAFE = "minesweeper:config:safe"
 const val KEY_CHORD = "minesweeper:config:chord"
+const val KEY_INVERT = "minesweeper:config:invert"
 
 const val MAX_SIZE = 50
 

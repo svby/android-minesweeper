@@ -11,6 +11,11 @@
             app:summary="@string/summary_chord"
             app:title="@string/config_chord" />
 
+        <SwitchPreferenceCompat
+            app:key="invert"
+            app:summary="@string/summary_invert"
+            app:title="@string/config_invert" />
+
         <PreferenceCategory app:title="Board settings">
             <Preference
                 app:key="width"
