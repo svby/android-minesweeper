@@ -12,17 +12,18 @@ import me.stuhlmeier.minesweeper.game.Preset
 import me.stuhlmeier.minesweeper.putPreset
 
 class PresetSettingsFragment : PreferenceFragmentCompat() {
-
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences_presets, rootKey)
         preferenceManager.sharedPreferencesName = PREFS_NAME
 
         preferenceScreen.let {
             val formatString = getString(R.string.summary_set_preset_individual)
-            it.get<Preference>("preset_easy")!!.summary = formatString.format(Preset.EASY.rows, Preset.EASY.columns, Preset.EASY.mines)
+            it.get<Preference>("preset_easy")!!.summary =
+                formatString.format(Preset.EASY.rows, Preset.EASY.columns, Preset.EASY.mines)
             it.get<Preference>("preset_medium")!!.summary =
-                    formatString.format(Preset.MEDIUM.rows, Preset.MEDIUM.columns, Preset.MEDIUM.mines)
-            it.get<Preference>("preset_hard")!!.summary = formatString.format(Preset.HARD.rows, Preset.HARD.columns, Preset.HARD.mines)
+                formatString.format(Preset.MEDIUM.rows, Preset.MEDIUM.columns, Preset.MEDIUM.mines)
+            it.get<Preference>("preset_hard")!!.summary =
+                formatString.format(Preset.HARD.rows, Preset.HARD.columns, Preset.HARD.mines)
         }
     }
 
@@ -38,5 +39,4 @@ class PresetSettingsFragment : PreferenceFragmentCompat() {
 
         return true
     }
-
 }

@@ -3,7 +3,6 @@ package me.stuhlmeier.minesweeper.game.generators
 import me.stuhlmeier.minesweeper.game.Field
 
 class RandomFieldGenerator : FieldGenerator {
-
     override fun generate(rows: Int, columns: Int, args: FieldGenerationArguments): Field {
         val field = Field(rows, columns)
 
@@ -14,5 +13,4 @@ class RandomFieldGenerator : FieldGenerator {
 
         return field
     }
-
 }

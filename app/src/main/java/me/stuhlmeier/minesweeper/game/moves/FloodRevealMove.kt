@@ -7,7 +7,6 @@ import java.util.*
 import kotlin.collections.HashSet
 
 class FloodRevealMove(val row: Int, val column: Int) : Move {
-
     override fun execute(board: Board, changeSet: Board.ChangeSet) {
         if (board.isMine(row, column)) {
             changeSet.reveal(row, column)
@@ -31,12 +30,14 @@ class FloodRevealMove(val row: Int, val column: Int) : Move {
             }
 
             val neighbors = board.eightNeighbors(row, column)
-            if (neighbors.none {
+            if (
+                neighbors.none {
                     board.isMine(
                         it.first,
                         it.second
                     )
-                }) neighbors.filter { it !in seen }.forEach(points::push)
+                }
+            ) neighbors.filter { it !in seen }.forEach(points::push)
         }
     }
 }

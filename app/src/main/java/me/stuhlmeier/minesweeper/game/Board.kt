@@ -11,11 +11,16 @@ import java.util.*
 import kotlin.experimental.and
 import kotlin.experimental.inv
 import kotlin.experimental.or
+import kotlin.math.ceil
 
 class Board private constructor(
-    private val field: Field, private var data: ByteArray, state: State, started: Boolean, revealed: Int, flagged: Int
+    private val field: Field,
+    private var data: ByteArray,
+    state: State,
+    started: Boolean,
+    revealed: Int,
+    flagged: Int
 ) : Parcelable, Serializable {
-
     enum class State { Win, Loss, Neutral }
 
     val rows get() = field.rows
@@ -48,11 +53,23 @@ class Board private constructor(
     var flagged = flagged
         private set
 
-    constructor(field: Field)
-            : this(Field(field), createEmptyDataArray(field.rows, field.columns), State.Neutral, false, 0, 0)
+    constructor(field: Field) : this(
+        Field(field),
+        createEmptyDataArray(field.rows, field.columns),
+        State.Neutral,
+        false,
+        0,
+        0
+    )
 
-    private constructor(field: Field, state: ByteArray, started: Boolean)
-            : this(field, state, State.Neutral, started, 0, 0) {
+    private constructor(field: Field, state: ByteArray, started: Boolean) : this(
+        field,
+        state,
+        State.Neutral,
+        started,
+        0,
+        0
+    ) {
         recalculate()
     }
 
@@ -67,7 +84,8 @@ class Board private constructor(
                 if (field[row, column]) state = State.Loss
             } else if (isFlaggedUnchecked(field, data, row, column)) flagged++
         }
-        if (state == State.Neutral && revealed == field.rows * field.columns - field.mines) state = State.Win
+        if (state == State.Neutral && revealed == field.rows * field.columns - field.mines)
+            state = State.Win
     }
 
     fun ensureSafe(row: Int, column: Int) {
@@ -110,7 +128,9 @@ class Board private constructor(
         val shift = whichQuarter shl 1
 
         val oldValue = data[whichByte]
-        val newValue = if (revealed) oldValue or (1 shl shift).toByte() else oldValue and (1 shl shift).toByte().inv()
+        val newValue =
+            if (revealed) oldValue or (1 shl shift).toByte()
+            else oldValue and (1 shl shift).toByte().inv()
 
         data[whichByte] = newValue
     }
@@ -122,12 +142,15 @@ class Board private constructor(
         val shift = (whichQuarter shl 1) + 1
 
         val oldValue = data[whichByte]
-        val newValue = if (flagged) oldValue or (1 shl shift).toByte() else oldValue and (1 shl shift).toByte().inv()
+        val newValue =
+            if (flagged) oldValue or (1 shl shift).toByte()
+            else oldValue and (1 shl shift).toByte().inv()
 
-        if (oldValue != newValue) this.flagged += when (flagged) {
-            true -> 1
-            false -> -1
-        }
+        if (oldValue != newValue)
+            this.flagged += when (flagged) {
+                true -> 1
+                false -> -1
+            }
 
         data[whichByte] = newValue
     }
@@ -208,15 +231,15 @@ class Board private constructor(
 
         val oldState = state
 
-        when {
+        state = when {
             reduced.any {
                 it.first == Move.Type.Reveal && isMine(
                     it.second.first,
                     it.second.second
                 )
-            } -> state = State.Loss
-            revealed == field.fields - field.mines -> state = State.Win
-            else -> state = State.Neutral
+            } -> State.Loss
+            revealed == field.fields - field.mines -> State.Win
+            else -> State.Neutral
         }
 
         stack.push(Pair(oldState, reduced))
@@ -241,10 +264,15 @@ class Board private constructor(
     private companion object {
         @JvmStatic
         private fun createEmptyDataArray(rows: Int, columns: Int) =
-            ByteArray(Math.ceil(rows * columns / 4.0).toInt()) { 0 }
+            ByteArray(ceil(rows * columns / 4.0).toInt()) { 0 }
 
         @JvmStatic
-        private fun isRevealedUnchecked(field: Field, data: ByteArray, row: Int, column: Int): Boolean {
+        private fun isRevealedUnchecked(
+            field: Field,
+            data: ByteArray,
+            row: Int,
+            column: Int
+        ): Boolean {
             val whichField = field.columns * row + column
             val whichByte = whichField ushr 2
             val whichQuarter = whichField % 4
@@ -255,7 +283,12 @@ class Board private constructor(
         }
 
         @JvmStatic
-        private fun isFlaggedUnchecked(field: Field, data: ByteArray, row: Int, column: Int): Boolean {
+        private fun isFlaggedUnchecked(
+            field: Field,
+            data: ByteArray,
+            row: Int,
+            column: Int
+        ): Boolean {
             val whichField = field.columns * row + column
             val whichByte = whichField ushr 2
             val whichQuarter = whichField % 4
@@ -304,5 +337,4 @@ class Board private constructor(
     }
 
     // endregion Serializable
-
 }

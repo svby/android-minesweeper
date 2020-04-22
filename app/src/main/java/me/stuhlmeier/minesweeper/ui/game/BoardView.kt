@@ -31,9 +31,7 @@ class BoardView(
     attrs: AttributeSet?,
     board: Board?,
     var settings: GameSettings?
-) :
-    View(context, attrs) {
-
+) : View(context, attrs) {
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, null, null)
     constructor(context: Context, board: Board, settings: GameSettings) : this(
         context,
@@ -46,9 +44,7 @@ class BoardView(
 
     @FunctionalInterface
     interface OnMoveListener {
-
         fun onMove(board: Board, state: Board.State)
-
     }
 
     private var _board = board
@@ -172,9 +168,8 @@ class BoardView(
         viewportY = max(0f, min(viewportMaxY, y))
     }
 
-    private inner class GestureListener : GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener {
-
+    private inner class GestureListener
+        : GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
         override fun onShowPress(e: MotionEvent) = Unit
         override fun onDoubleTapEvent(e: MotionEvent) = true
         override fun onDown(e: MotionEvent) = true
@@ -298,11 +293,9 @@ class BoardView(
 
             return true
         }
-
     }
 
     private inner class FlingRunnable(private val scroller: OverScroller) : Runnable {
-
         override fun run() {
             if (scroller.computeScrollOffset()) {
                 scrollTo(scroller.currX.toFloat(), scroller.currY.toFloat())
@@ -310,7 +303,6 @@ class BoardView(
                 post(this)
             }
         }
-
     }
 
     fun undo(): Boolean {
@@ -441,5 +433,4 @@ class BoardView(
 
         setMeasuredDimension(width, height)
     }
-
 }

@@ -18,8 +18,12 @@ import me.stuhlmeier.minesweeper.game.generators.FieldGenerationArguments
 import me.stuhlmeier.minesweeper.game.generators.RandomFieldGenerator
 
 class GameFragment : Fragment() {
-
-    private val prefs by lazy { requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE) }
+    private val prefs by lazy {
+        requireContext().getSharedPreferences(
+            PREFS_NAME,
+            Context.MODE_PRIVATE
+        )
+    }
 
     private val generator = RandomFieldGenerator()
     private lateinit var settings: GameSettings
@@ -34,8 +38,11 @@ class GameFragment : Fragment() {
         initialSetup(savedInstanceState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.fragment_game, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = inflater.inflate(R.layout.fragment_game, container, false)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -82,11 +89,13 @@ class GameFragment : Fragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) = inflater.inflate(R.menu.game_menu, menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
+        inflater.inflate(R.menu.game_menu, menu)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_settings -> NavHostFragment.findNavController(this).navigate(R.id.action_gameFragment_to_settingsFragment)
+            R.id.action_settings -> NavHostFragment.findNavController(this)
+                .navigate(R.id.action_gameFragment_to_settingsFragment)
             R.id.action_new -> newGame()
             R.id.action_restart -> restartGame()
             R.id.action_undo -> undo()
@@ -106,7 +115,8 @@ class GameFragment : Fragment() {
     }
 
     private fun updateHeader() {
-        text_remaining.text = getString(R.string.remaining_flags).format(board.mines - board.flagged)
+        text_remaining.text =
+            getString(R.string.remaining_flags).format(board.mines - board.flagged)
     }
 
     private fun initialSetup(bundle: Bundle?) {
@@ -116,7 +126,11 @@ class GameFragment : Fragment() {
         Log.v("Minesweeper", stored.toString())
 
         settings = GameSettings.load(prefs)
-        val field = generator.generate(settings.rows, settings.columns, FieldGenerationArguments(settings.mines))
+        val field = generator.generate(
+            settings.rows,
+            settings.columns,
+            FieldGenerationArguments(settings.mines)
+        )
 
         started = false
         board = Board(field)
@@ -138,7 +152,10 @@ class GameFragment : Fragment() {
     }
 
     fun undo() {
-        if (!board_view.undo()) Toast.makeText(requireContext(), R.string.empty_undo_stack, Toast.LENGTH_SHORT).show()
+        if (!board_view.undo()) Toast.makeText(
+            requireContext(),
+            R.string.empty_undo_stack,
+            Toast.LENGTH_SHORT
+        ).show()
     }
-
 }

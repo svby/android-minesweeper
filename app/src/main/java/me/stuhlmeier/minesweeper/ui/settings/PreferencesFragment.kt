@@ -11,7 +11,6 @@ import me.stuhlmeier.minesweeper.*
 import kotlin.math.min
 
 class PreferencesFragment : PreferenceFragmentCompat() {
-
     private fun updateValues() {
         preferenceManager.sharedPreferences.let { prefs ->
             preferenceScreen.let {
@@ -110,5 +109,4 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
         return true
     }
-
 }

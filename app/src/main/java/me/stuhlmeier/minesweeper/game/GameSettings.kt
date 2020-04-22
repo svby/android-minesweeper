@@ -11,9 +11,7 @@ data class GameSettings(
     val safe: Boolean,
     val chordEnabled: Boolean
 ) {
-
     companion object {
-
         @JvmStatic
         fun ensure(prefs: SharedPreferences) {
             val rows = prefs.getInt(KEY_ROWS, -1)
@@ -39,7 +37,5 @@ data class GameSettings(
                 prefs.getBoolean(KEY_CHORD, true)
             )
         }
-
     }
-
 }

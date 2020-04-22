@@ -16,9 +16,7 @@ class NumberPickerDialogFragment(
     private val title: Int,
     private val range: IntRange = 1..MAX_SIZE,
     private val initialValue: Int = range.first
-) :
-    DialogFragment() {
-
+) : DialogFragment() {
     private var listener: ((Int) -> Unit)? = null
 
     fun setListener(listener: (Int) -> Unit) {
@@ -31,14 +29,18 @@ class NumberPickerDialogFragment(
         if (isTextBased) {
             @SuppressLint("InflateParams")
             val view =
-                requireActivity().layoutInflater.inflate(R.layout.fragment_dialog_numberpicker_edittext, null, false)
+                requireActivity().layoutInflater.inflate(
+                    R.layout.fragment_dialog_numberpicker_edittext,
+                    null,
+                    false
+                )
             val editText = view.findViewById<EditText>(R.id.edittext_value)
 
             editText.setText(initialValue.toString())
 
             view.findViewById<TextView>(R.id.spinner_title).setText(title)
             view.findViewById<TextView>(R.id.spinner_range).text =
-                    getString(R.string.dialog_spinner_range).format(range.first, range.last)
+                getString(R.string.dialog_spinner_range).format(range.first, range.last)
 
             builder.setView(view)
             builder.setPositiveButton(android.R.string.ok) { _, _ ->
@@ -56,7 +58,11 @@ class NumberPickerDialogFragment(
         } else {
             @SuppressLint("InflateParams")
             val view =
-                requireActivity().layoutInflater.inflate(R.layout.fragment_dialog_numberpicker_spinner, null, false)
+                requireActivity().layoutInflater.inflate(
+                    R.layout.fragment_dialog_numberpicker_spinner,
+                    null,
+                    false
+                )
             val spinner = view.findViewById<NumberPicker>(R.id.spinner_value)
 
             view.findViewById<TextView>(R.id.spinner_title).setText(title)
@@ -70,5 +76,4 @@ class NumberPickerDialogFragment(
 
         return builder.create()
     }
-
 }

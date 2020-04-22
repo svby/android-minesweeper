@@ -4,7 +4,6 @@ import me.stuhlmeier.minesweeper.game.Field
 import kotlin.math.min
 
 class SequentialFieldGenerator : FieldGenerator {
-
     override fun generate(rows: Int, columns: Int, args: FieldGenerationArguments): Field {
         val field = Field(rows, columns)
 
@@ -14,5 +13,4 @@ class SequentialFieldGenerator : FieldGenerator {
 
         return field
     }
-
 }
